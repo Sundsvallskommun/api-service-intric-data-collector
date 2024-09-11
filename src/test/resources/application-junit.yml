@@ -2,14 +2,8 @@ spring:
   main:
     banner-mode: off
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test
-    username: sa
-  jpa:
-    open-in-view: false
-  h2:
-    console:
-      enabled: true
+    url: jdbc:tc:mariadb:10.6.12:///?user=root&password=
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
 
 # Integrations
 integration:
