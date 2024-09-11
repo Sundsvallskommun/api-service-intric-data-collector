@@ -1,0 +1,53 @@
+package se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence;
+
+import java.util.List;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.validation.annotation.Validated;
+
+@Validated
+@ConfigurationProperties(prefix = "integration.confluence")
+public record ConfluenceIntegrationProperties(
+
+        @NotBlank
+        String baseUrl,
+
+        @Valid
+        @NotNull
+        BasicAuthentication basicAuth,
+
+        WebhookSecurity webhookSecurity,
+
+        @DefaultValue("false")
+        boolean doInitialImport,
+
+        @DefaultValue
+        List<@NotBlank String> blacklistedRootIds,
+
+        @NotEmpty
+        List<@Valid Mapping> mappings,
+
+        @DefaultValue("5")
+        int connectTimeoutInSeconds,
+
+        @DefaultValue("20")
+        int readTimeoutInSeconds) {
+
+    public record Mapping(@NotBlank String intricGroupId, @NotBlank String rootId) { }
+
+    public record WebhookSecurity(String secret, boolean enabled) { }
+
+    public record BasicAuthentication(
+
+        @NotBlank
+        String username,
+
+        @NotBlank
+        String password) { }
+}

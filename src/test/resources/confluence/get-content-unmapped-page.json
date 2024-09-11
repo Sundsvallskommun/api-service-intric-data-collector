@@ -1,0 +1,75 @@
+{
+  "id": "1212433",
+  "type": "page",
+  "status": "current",
+  "title": "Dummy page",
+  "ancestors": [
+    {
+      "id": "98319",
+      "type": "page",
+      "status": "current",
+      "title": "Welcome to Confluence",
+      "extensions": {
+        "position": 8
+      },
+      "_links": {
+        "webui": "/display/ds/Welcome+to+Confluence",
+        "edit": "/pages/resumedraft.action?draftId=98319",
+        "tinyui": "/x/D4AB",
+        "self": "http://localhost:8090/rest/api/content/98319"
+      },
+      "_expandable": {
+        "container": "/rest/api/space/ds",
+        "metadata": "",
+        "operations": "",
+        "children": "/rest/api/content/98319/child",
+        "restrictions": "/rest/api/content/98319/restriction/byOperation",
+        "history": "/rest/api/content/98319/history",
+        "ancestors": "",
+        "body": "",
+        "version": "",
+        "descendants": "/rest/api/content/98319/descendant",
+        "space": "/rest/api/space/ds"
+      }
+    }
+  ],
+  "body": {
+    "storage": {
+      "value": "<p>...content goes here...</p>",
+      "representation": "storage",
+      "_expandable": {
+        "content": "/rest/api/content/1212433"
+      }
+    },
+    "_expandable": {
+      "editor": "",
+      "view": "",
+      "export_view": "",
+      "styled_view": "",
+      "anonymous_export_view": ""
+    }
+  },
+  "extensions": {
+    "position": 9
+  },
+  "_links": {
+    "webui": "/display/ds/Dummy+page",
+    "edit": "/pages/resumedraft.action?draftId=1212433&draftShareId=1f5f96f0-2ea8-4178-b423-058456a48e71",
+    "tinyui": "/x/EYAS",
+    "collection": "/rest/api/content",
+    "base": "http://localhost:8090",
+    "context": "",
+    "self": "http://localhost:8090/rest/api/content/1212433"
+  },
+  "_expandable": {
+    "container": "/rest/api/space/ds",
+    "metadata": "",
+    "operations": "",
+    "children": "/rest/api/content/1212433/child",
+    "restrictions": "/rest/api/content/1212433/restriction/byOperation",
+    "history": "/rest/api/content/1212433/history",
+    "version": "",
+    "descendants": "/rest/api/content/1212433/descendant",
+    "space": "/rest/api/space/ds"
+  }
+}

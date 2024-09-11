@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: intricdatacollector
+
+openapi:
+  name: intric-data-collector
+  title: Intric Data Collector
+  version: '@project.version@'
