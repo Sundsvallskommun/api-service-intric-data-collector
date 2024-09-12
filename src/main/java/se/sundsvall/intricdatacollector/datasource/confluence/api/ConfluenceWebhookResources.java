@@ -2,6 +2,12 @@ package se.sundsvall.intricdatacollector.datasource.confluence.api;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
+import static se.sundsvall.intricdatacollector.datasource.confluence.model.EventType.PAGE_CREATED;
+import static se.sundsvall.intricdatacollector.datasource.confluence.model.EventType.PAGE_REMOVED;
+import static se.sundsvall.intricdatacollector.datasource.confluence.model.EventType.PAGE_RESTORED;
+import static se.sundsvall.intricdatacollector.datasource.confluence.model.EventType.PAGE_UPDATED;
+
+import java.util.EnumSet;
 
 import jakarta.validation.Valid;
 
@@ -40,10 +46,12 @@ class ConfluenceWebhookResources {
     )
     ResponseEntity<Void> handleWebhookEvent(@PathVariable("municipalityId") final String municipalityId, @RequestBody @Valid final ConfluenceWebhookData request) {
         var eventType = EventType.fromString(request.eventType());
+        var pageId = request.page().id().toString();
 
-        switch (eventType) {
-            case PAGE_CREATED, PAGE_UPDATED, PAGE_RESTORED -> dataSource.processPage(municipalityId, eventType, request.page().id().toString());
-            case PAGE_REMOVED -> dataSource.deletePage(municipalityId, request.page().id().toString());
+        if (EnumSet.of(PAGE_CREATED, PAGE_UPDATED, PAGE_RESTORED).contains(eventType)) {
+            dataSource.processPage(municipalityId, eventType, pageId);
+        } else if (eventType == PAGE_REMOVED) {
+            dataSource.deletePage(municipalityId, pageId);
         }
 
         return ok().build();

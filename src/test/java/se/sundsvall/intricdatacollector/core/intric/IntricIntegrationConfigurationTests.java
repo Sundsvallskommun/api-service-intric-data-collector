@@ -16,7 +16,6 @@ import org.springframework.cloud.openfeign.FeignBuilderCustomizer;
 import se.sundsvall.dept44.configuration.feign.FeignMultiCustomizer;
 
 import feign.RequestInterceptor;
-import feign.RequestTemplate;
 
 @ExtendWith(MockitoExtension.class)
 class IntricIntegrationConfigurationTests {
@@ -34,14 +33,6 @@ class IntricIntegrationConfigurationTests {
     @Test
     void feignBuilderCustomizer() {
         var configuration = new IntricIntegrationConfiguration();
-
-        var requestInterceptor = new RequestInterceptor() {
-
-            @Override
-            public void apply(final RequestTemplate request) {
-
-            }
-        };
 
         when(propertiesMock.connectTimeoutInSeconds()).thenReturn(123);
         when(propertiesMock.readTimeoutInSeconds()).thenReturn(456);
