@@ -1,6 +1,7 @@
 package se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence;
 
 import java.util.List;
+import java.util.Map;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +14,9 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "integration.confluence")
-public record ConfluenceIntegrationProperties(
+public record ConfluenceIntegrationProperties(Map<String, Environment> environments) {
+
+    public record Environment(
 
         @NotBlank
         String baseUrl,
@@ -39,15 +42,19 @@ public record ConfluenceIntegrationProperties(
         @DefaultValue("20")
         int readTimeoutInSeconds) {
 
-    public record Mapping(@NotBlank String intricGroupId, @NotBlank String rootId) { }
+        public record Mapping(@NotBlank String intricGroupId, @NotBlank String rootId) {
+        }
 
-    public record WebhookSecurity(String secret, boolean enabled) { }
+        public record WebhookSecurity(String secret, boolean enabled) {
+        }
 
-    public record BasicAuthentication(
+        public record BasicAuthentication(
 
-        @NotBlank
-        String username,
+            @NotBlank
+            String username,
 
-        @NotBlank
-        String password) { }
+            @NotBlank
+            String password) {
+        }
+    }
 }

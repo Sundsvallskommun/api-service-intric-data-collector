@@ -20,18 +20,20 @@ integration:
 
   # Confluence
   confluence:
-    base-url: someBaseUrl
-    basic-auth:
-      username: someUsername
-      password: somePassword
-    webhook-security:
-      enabled: true
-      secret: SUPER_DUPER_S3CR3T!
-    mappings:
-      - root-id: 4567110901
-        intric-group-id: 97332ac9-b05e-46ac-abb5-2e2563e86d87
-    blacklisted-root-ids:
-      - 4567890
-    do-initial-import: false
-    connect-timeout-in-seconds: 123
-    read-timeout-in-seconds: 456
+    environments:
+      1984:
+        base-url: someBaseUrl
+        basic-auth:
+          username: someUsername
+          password: somePassword
+        webhook-security:
+          enabled: true
+          secret: SUPER_DUPER_S3CR3T!
+        mappings:
+          - root-id: 4567110901
+            intric-group-id: 97332ac9-b05e-46ac-abb5-2e2563e86d87
+        blacklisted-root-ids:
+          - 4567890
+        do-initial-import: false
+        connect-timeout-in-seconds: 123
+        read-timeout-in-seconds: 456

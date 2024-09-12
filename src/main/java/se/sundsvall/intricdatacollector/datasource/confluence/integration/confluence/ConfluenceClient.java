@@ -1,19 +1,14 @@
 package se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationConfiguration.INTEGRATION_NAME;
 
-import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.CollectionFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(
-    name = INTEGRATION_NAME,
-    url = "${integration.confluence.base-url}",
-    configuration = ConfluenceIntegrationConfiguration.class
-)
 public interface ConfluenceClient {
 
+    @CollectionFormat(feign.CollectionFormat.CSV)
     @GetMapping(
         value = "/content/{pageId}?expand=body.storage,ancestors",
         produces = APPLICATION_JSON_VALUE,

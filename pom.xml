@@ -137,9 +137,13 @@
                         <exclude>**/intricdatacollector/Application*</exclude>
                         <exclude>**/intricdatacollector/configuration/*</exclude>
                         <!-- Exclude Confluence webhook signature filter internals for now -->
+                        <exclude>**/*WebhookSignatureVerificationFilter*</exclude>
                         <exclude>**/*BodyCachingHttpServletRequestWrapper*</exclude>
                         <exclude>**/*BodyCachingServletInputStream*</exclude>
-                        <!-- Exclude builders manually until jilt changes the retention policy on the @Builder annotation -->
+                        <!--
+                            Exclude builders until jilt changes the retention policy to either CLASS
+                            or RUNTIME on the @Builder annotation
+                        -->
                         <exclude>**/intricdatacollector/**/*Builder*</exclude>
                         <exclude>**/intricdatacollector/**/*Builder*</exclude>
                     </excludes>

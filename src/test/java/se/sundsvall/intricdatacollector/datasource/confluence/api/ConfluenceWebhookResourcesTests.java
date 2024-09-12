@@ -8,6 +8,8 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static se.sundsvall.intricdatacollector.datasource.confluence.model.EventType.PAGE_CREATED;
 import static se.sundsvall.intricdatacollector.datasource.confluence.model.EventType.PAGE_REMOVED;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,17 +56,21 @@ class ConfluenceWebhookResourcesTests {
 
     @BeforeEach
     void setUp() {
-        hmacUtils = new HmacUtils(HmacAlgorithms.HMAC_SHA_256, properties.webhookSecurity().secret());
+        var environment = properties.environments().get("1984");
+
+        hmacUtils = new HmacUtils(HmacAlgorithms.HMAC_SHA_256, environment.webhookSecurity().secret());
     }
 
     @ParameterizedTest
     @EnumSource(EventType.class)
     void handleWebhookEvent(final EventType eventType) {
-        var pageId = 1203442627L;
-        var request = createRequest(eventType, pageId);
+        var municipalityId = "1984";
+        var pageId = "1203442627";
+        var request = createRequest(eventType, Long.valueOf(pageId));
 
         testClient.post()
-            .uri("/confluence/webhook-event")
+            .uri(uriBuilder -> uriBuilder.path("/{municipalityId}/confluence/webhook-event")
+                .build(Map.of("municipalityId", municipalityId)))
             .contentType(APPLICATION_JSON)
             .body(BodyInserters.fromValue(request))
             .header("x-hub-signature", createHmacSignature(request))
@@ -73,19 +79,21 @@ class ConfluenceWebhookResourcesTests {
             .expectBody().isEmpty();
 
         if (eventType == PAGE_REMOVED) {
-            verify(dataSourceMock).deletePage(Long.toString(pageId));
+            verify(dataSourceMock).deletePage(municipalityId, pageId);
         } else {
-            verify(dataSourceMock).processPage(eventType, Long.toString(pageId));
+            verify(dataSourceMock).processPage(municipalityId, eventType, pageId);
         }
     }
 
     @Test
     void handleWebhookEventWhenSignatureVerificationFails() {
-        var pageId = 1203442627L;
-        var request = createRequest(PAGE_CREATED, pageId);
+        var municipalityId = "1984";
+        var pageId = "1203442627";
+        var request = createRequest(PAGE_CREATED, Long.valueOf(pageId));
 
         testClient.post()
-            .uri("/confluence/webhook-event")
+            .uri(uriBuilder -> uriBuilder.path("/{municipalityId}/confluence/webhook-event")
+                .build(Map.of("municipalityId", municipalityId)))
             .contentType(APPLICATION_JSON)
             .body(BodyInserters.fromValue(request))
             .header("x-hub-signature", "some-invalid-signature-data")

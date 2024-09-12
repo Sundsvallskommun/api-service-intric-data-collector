@@ -6,6 +6,7 @@ import static org.springframework.http.ResponseEntity.ok;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,16 +34,16 @@ class ConfluenceWebhookResources {
         responses = @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
     )
     @PostMapping(
-        value = "/confluence/webhook-event",
+        value = "/{municipalityId}/confluence/webhook-event",
         consumes = APPLICATION_JSON_VALUE,
         produces = APPLICATION_JSON_VALUE
     )
-    ResponseEntity<Void> handleWebhookEvent(@RequestBody @Valid final ConfluenceWebhookData request) {
+    ResponseEntity<Void> handleWebhookEvent(@PathVariable("municipalityId") final String municipalityId, @RequestBody @Valid final ConfluenceWebhookData request) {
         var eventType = EventType.fromString(request.eventType());
 
         switch (eventType) {
-            case PAGE_CREATED, PAGE_UPDATED, PAGE_RESTORED -> dataSource.processPage(eventType, request.page().id().toString());
-            case PAGE_REMOVED -> dataSource.deletePage(request.page().id().toString());
+            case PAGE_CREATED, PAGE_UPDATED, PAGE_RESTORED -> dataSource.processPage(municipalityId, eventType, request.page().id().toString());
+            case PAGE_REMOVED -> dataSource.deletePage(municipalityId, request.page().id().toString());
         }
 
         return ok().build();
