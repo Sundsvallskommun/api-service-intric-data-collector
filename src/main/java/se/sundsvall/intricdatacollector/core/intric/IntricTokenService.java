@@ -26,7 +26,7 @@ class IntricTokenService {
         this.restClient = restClient;
 
         accessTokenRequestData = new LinkedMultiValueMap<>();
-        accessTokenRequestData.add("grant_type", "");
+        accessTokenRequestData.add("grant_type", "password");
         accessTokenRequestData.add("username", username);
         accessTokenRequestData.add("password", password);
         accessTokenRequestData.add("scope", "");

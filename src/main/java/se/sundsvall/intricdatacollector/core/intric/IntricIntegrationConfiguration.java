@@ -28,6 +28,8 @@ class IntricIntegrationConfiguration {
     FeignBuilderCustomizer feignBuilderCustomizer(final IntricIntegrationProperties properties,
             final IntricTokenService tokenService) {
         return FeignMultiCustomizer.create()
+            // Use a custom OAuth2 request interceptor, since Spring has deprecated the required password grant
+            // type, as recommended by IETF (https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics-19#section-2.4)
             .withRequestInterceptor(template -> template.header(AUTHORIZATION, "Bearer " + tokenService.getToken()))
             .withRequestTimeoutsInSeconds(properties.connectTimeoutInSeconds(), properties.readTimeoutInSeconds())
             .composeCustomizersToOne();
