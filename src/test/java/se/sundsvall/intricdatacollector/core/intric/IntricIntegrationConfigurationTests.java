@@ -2,8 +2,11 @@ package se.sundsvall.intricdatacollector.core.intric;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
@@ -12,8 +15,10 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cloud.openfeign.FeignBuilderCustomizer;
+import org.springframework.web.client.RestClient;
 
 import se.sundsvall.dept44.configuration.feign.FeignMultiCustomizer;
+import se.sundsvall.dept44.security.Truststore;
 
 import feign.RequestInterceptor;
 
@@ -52,5 +57,40 @@ class IntricIntegrationConfigurationTests {
 
             assertThat(customizer).isSameAs(feignBuilderCustomizerMock);
         }
+    }
+
+    @Test
+    void intricTokenService() {
+        var oauth2PropertiesMock = mock(IntricIntegrationProperties.Oauth2.class);
+        var restClientMock = mock(RestClient.class);
+
+        when(propertiesMock.oauth2()).thenReturn(oauth2PropertiesMock);
+
+        var configuration = new IntricIntegrationConfiguration();
+        var intricTokenService = configuration.intricTokenService(restClientMock, propertiesMock);
+
+        assertThat(intricTokenService).isNotNull();
+
+        verify(propertiesMock, times(2)).oauth2();
+        verify(oauth2PropertiesMock).username();
+        verify(oauth2PropertiesMock).password();
+        verifyNoMoreInteractions(propertiesMock, oauth2PropertiesMock);
+    }
+
+    @Test
+    void intricTokenRestClient() {
+        var oauth2PropertiesMock = mock(IntricIntegrationProperties.Oauth2.class);
+        var truststoreMock = mock(Truststore.class);
+
+        when(propertiesMock.oauth2()).thenReturn(oauth2PropertiesMock);
+
+        var configuration = new IntricIntegrationConfiguration();
+        var intricTokenRestClient = configuration.intricTokenRestClient(propertiesMock, truststoreMock);
+
+        assertThat(intricTokenRestClient).isNotNull();
+
+        verify(oauth2PropertiesMock).tokenUrl();
+        verify(truststoreMock).getSSLContext();
+        verifyNoMoreInteractions(oauth2PropertiesMock, truststoreMock);
     }
 }
