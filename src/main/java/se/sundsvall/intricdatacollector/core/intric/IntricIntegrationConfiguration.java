@@ -1,5 +1,6 @@
 package se.sundsvall.intricdatacollector.core.intric;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -7,6 +8,9 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VAL
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 
+import java.io.ByteArrayOutputStream;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
@@ -18,6 +22,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import org.zalando.problem.Problem;
+import org.zalando.problem.Status;
 
 import se.sundsvall.dept44.configuration.feign.FeignConfiguration;
 import se.sundsvall.dept44.configuration.feign.FeignMultiCustomizer;
@@ -61,7 +66,21 @@ class IntricIntegrationConfiguration {
             .defaultHeader(ACCEPT, APPLICATION_JSON_VALUE)
             .defaultHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
             .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
-                throw Problem.valueOf(INTERNAL_SERVER_ERROR, "Unable to retrieve access token");
+                var status = Status.valueOf(response.getStatusCode().value());
+                var out = new ByteArrayOutputStream();
+                IOUtils.copy(response.getBody(), out);
+                var responseBody = out.toString(UTF_8);
+
+                throw Problem.builder()
+                    .withStatus(INTERNAL_SERVER_ERROR)
+                    .withDetail("Unable to retrieve access token")
+                    .withCause(Problem.builder()
+                        .withStatus(status)
+                        .withDetail(responseBody)
+                        .build())
+                    .build();
+
+                //throw Problem.valueOf(INTERNAL_SERVER_ERROR, "Unable to retrieve access token (" + status + ")");
             })
             .build();
     }

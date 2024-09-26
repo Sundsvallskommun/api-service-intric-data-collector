@@ -136,6 +136,8 @@
                     <excludes>
                         <exclude>**/intricdatacollector/Application*</exclude>
                         <exclude>**/intricdatacollector/configuration/*</exclude>
+                        <!-- Exclude Intric configuration for now -->
+                        <exclude>**/IntricIntegrationConfiguration*</exclude>
                         <!-- Exclude Confluence webhook signature filter internals for now -->
                         <exclude>**/*WebhookSignatureVerificationFilter*</exclude>
                         <exclude>**/*BodyCachingHttpServletRequestWrapper*</exclude>
