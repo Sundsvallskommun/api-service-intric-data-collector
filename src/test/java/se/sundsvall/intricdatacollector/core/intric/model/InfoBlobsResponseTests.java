@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class InfoBlobsResponseTests {
 
     @Test
-    void testCreationAndAccessors() {
+    void creationAndAccessors() {
         var embeddingModelId = "someEmbeddingModelId";
         var title = "someTitle";
         var url = "someUrl";

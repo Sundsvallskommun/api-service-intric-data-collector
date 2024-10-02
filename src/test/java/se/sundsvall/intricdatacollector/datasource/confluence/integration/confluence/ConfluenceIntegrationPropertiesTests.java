@@ -25,11 +25,13 @@ class ConfluenceIntegrationPropertiesTests {
                 assertThat(basicAuth.username()).isEqualTo("someUsername");
                 assertThat(basicAuth.password()).isEqualTo("somePassword");
             });
-            assertThat(environment.webhookSecurity()).satisfies(webhookSecurity -> {
-                assertThat(webhookSecurity.enabled()).isTrue();
-                assertThat(webhookSecurity.secret()).isEqualTo("SUPER_DUPER_S3CR3T!");
+            assertThat(environment.webhook()).satisfies(webhook -> {
+                assertThat(webhook.enabled()).isTrue();
+                assertThat(webhook.security()).satisfies(webhookSecurity -> {
+                    assertThat(webhookSecurity.enabled()).isTrue();
+                    assertThat(webhookSecurity.secret()).isEqualTo("SUPER_DUPER_S3CR3T!");
+                });
             });
-            assertThat(environment.doInitialImport()).isFalse();
             assertThat(environment.blacklistedRootIds()).containsExactly("4567890");
             assertThat(environment.mappings()).hasSize(1).first().satisfies(mapping -> {
                 assertThat(mapping.rootId()).isEqualTo("4567110901");

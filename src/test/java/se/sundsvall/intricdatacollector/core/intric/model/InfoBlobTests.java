@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 class InfoBlobTests {
 
     @Test
-    void testCreationAndAccessors() {
+    void creationAndAccessors() {
         var text = "someText";
         var title = "someTitle";
         var url = "someUrl";

@@ -1,20 +1,22 @@
 package se.sundsvall.intricdatacollector.datasource.confluence.api;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+import static org.apache.commons.codec.digest.HmacAlgorithms.HMAC_SHA_256;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
+import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 import static se.sundsvall.intricdatacollector.datasource.confluence.model.EventType.PAGE_CREATED;
-import static se.sundsvall.intricdatacollector.datasource.confluence.model.EventType.PAGE_REMOVED;
+import static se.sundsvall.intricdatacollector.datasource.confluence.model.EventType.PAGE_UPDATED;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.BodyInserters;
 
 import se.sundsvall.intricdatacollector.Application;
 import se.sundsvall.intricdatacollector.datasource.confluence.ConfluenceDataSource;
@@ -40,8 +41,8 @@ import se.sundsvall.intricdatacollector.test.annotation.UnitTest;
 class ConfluenceWebhookResourcesTests {
 
     private final ObjectMapper objectMapper = new ObjectMapper()
-        .configure(SerializationFeature.INDENT_OUTPUT, false)
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        .configure(INDENT_OUTPUT, false)
+        .setSerializationInclusion(NON_NULL);
 
     private HmacUtils hmacUtils;
 
@@ -58,31 +59,33 @@ class ConfluenceWebhookResourcesTests {
     void setUp() {
         var environment = properties.environments().get("1984");
 
-        hmacUtils = new HmacUtils(HmacAlgorithms.HMAC_SHA_256, environment.webhookSecurity().secret());
+        hmacUtils = new HmacUtils(HMAC_SHA_256, environment.webhook().security().secret());
     }
 
     @ParameterizedTest
     @EnumSource(EventType.class)
     void handleWebhookEvent(final EventType eventType) {
-        var municipalityId = "1984";
         var pageId = "1203442627";
+        var municipalityId = "1984";
         var request = createRequest(eventType, Long.valueOf(pageId));
 
         testClient.post()
             .uri(uriBuilder -> uriBuilder.path("/{municipalityId}/confluence/webhook-event")
                 .build(Map.of("municipalityId", municipalityId)))
             .contentType(APPLICATION_JSON)
-            .body(BodyInserters.fromValue(request))
+            .body(fromValue(request))
             .header("x-hub-signature", createHmacSignature(request))
             .exchange()
             .expectStatus().isOk()
             .expectBody().isEmpty();
 
-        if (eventType == PAGE_REMOVED) {
-            verify(dataSourceMock).deletePage(municipalityId, pageId);
-        } else {
-            verify(dataSourceMock).processPage(municipalityId, eventType, pageId);
+        switch (eventType) {
+            case PAGE_CREATED, PAGE_RESTORED -> verify(dataSourceMock).insertPage(municipalityId, pageId);
+            case PAGE_UPDATED -> verify(dataSourceMock).updatePage(municipalityId, pageId);
+            case PAGE_REMOVED -> verify(dataSourceMock).deletePage(municipalityId, pageId);
         }
+
+        verifyNoMoreInteractions(dataSourceMock);
     }
 
     @Test
@@ -95,7 +98,7 @@ class ConfluenceWebhookResourcesTests {
             .uri(uriBuilder -> uriBuilder.path("/{municipalityId}/confluence/webhook-event")
                 .build(Map.of("municipalityId", municipalityId)))
             .contentType(APPLICATION_JSON)
-            .body(BodyInserters.fromValue(request))
+            .body(fromValue(request))
             .header("x-hub-signature", "some-invalid-signature-data")
             .exchange()
             .expectStatus().isForbidden()
@@ -113,7 +116,7 @@ class ConfluenceWebhookResourcesTests {
                 .build())
             .withUserKey("4028a083917e668c01917e66f5a80000")
             .withTimestamp(1724928764451L)
-            .withUpdateTrigger(eventType == EventType.PAGE_UPDATED ? "page_updated" : null)
+            .withUpdateTrigger(eventType == PAGE_UPDATED ? "page_updated" : null)
             .build();
     }
 

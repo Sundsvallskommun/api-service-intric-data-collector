@@ -48,7 +48,7 @@ class WebhookSignatureVerificationConfiguration {
     FilterRegistrationBean<WebhookSignatureVerificationFilter> webhookSignatureVerificationFilter(final ConfluenceIntegrationProperties properties) {
         // Extract the environments where webhook security is enabled
         var securityEnabledEnvironments = properties.environments().entrySet().stream()
-            .filter(entry -> entry.getValue().webhookSecurity().enabled())
+            .filter(entry -> entry.getValue().webhook().security().enabled())
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         // Construct the URL patterns for the webhook security-enabled environments
@@ -74,7 +74,7 @@ class WebhookSignatureVerificationConfiguration {
 
         WebhookSignatureVerificationFilter(final Map<String, ConfluenceIntegrationProperties.Environment> environments) {
             environments.forEach((municipalityId, environment) ->
-                hmacUtils.put(municipalityId, new HmacUtils(HMAC_SHA_256, environment.webhookSecurity().secret())));
+                hmacUtils.put(municipalityId, new HmacUtils(HMAC_SHA_256, environment.webhook().security().secret())));
         }
 
         @Override

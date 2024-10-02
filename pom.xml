@@ -14,6 +14,7 @@
     <version>0.1-SNAPSHOT</version>
 
     <properties>
+        <shedlock.version>5.16.0</shedlock.version>
 		<jsoup.version>1.18.1</jsoup.version>
         <jilt.version>1.6.1</jilt.version>
         <auth0.java-jwt.version>4.4.0</auth0.java-jwt.version>
@@ -71,6 +72,17 @@
         </dependency>
 
         <!-- Other -->
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>${shedlock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-jdbc-template</artifactId>
+            <version>${shedlock.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>

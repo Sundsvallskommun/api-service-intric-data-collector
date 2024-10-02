@@ -44,6 +44,7 @@ class ConfluenceIntegrationConfiguration {
                 .forType(ConfluenceClient.class, "%s-%s".formatted(CLIENT_ID, municipalityId))
                 .url(environment.baseUrl())
                 .customize(builder -> builder
+                    .dismiss404()
                     .errorDecoder(new ProblemErrorDecoder(clientName))
                     .requestInterceptor(new BasicAuthRequestInterceptor(environment.basicAuth().username(), environment.basicAuth().password()))
                     .options(new Request.Options(environment.connectTimeoutInSeconds(), SECONDS, environment.readTimeoutInSeconds(), SECONDS, true))

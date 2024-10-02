@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class InfoBlobsRequestTests {
 
     @Test
-    void testCreationAndAccessors() {
+    void creationAndAccessors() {
         var request = new InfoBlobsRequest(List.of(
             new InfoBlob("someText", new Metadata("someTitle", "someUrl")),
             new InfoBlob("someOtherText", new Metadata("someOtherTitle", "someOtherUrl"))
