@@ -46,7 +46,7 @@ class ConfluenceWebhookResources {
     )
     ResponseEntity<Void> handleWebhookEvent(@PathVariable("municipalityId") final String municipalityId, @RequestBody @Valid final ConfluenceWebhookData request) {
         // Manually check if webhooks are enabled for the given municipality
-        var webhookEnabled = ofNullable(properties.environments().get(municipalityId))
+        boolean webhookEnabled = ofNullable(properties.environments().get(municipalityId))
             .map(ConfluenceIntegrationProperties.Environment::webhook)
             .map(ConfluenceIntegrationProperties.Environment.Webhook::enabled)
             .orElse(false);
