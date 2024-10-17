@@ -35,11 +35,11 @@ class DbIntegrationTests {
         var municipalityId = "someMunicipalityId";
         var blobId = "someBlobId";
 
-        when(pageRepositoryMock.findBlobIdByIdAndMunicipalityId(pageId, municipalityId)).thenReturn(of(blobId));
+        when(pageRepositoryMock.findBlobIdByPageIdAndMunicipalityId(pageId, municipalityId)).thenReturn(of(blobId));
 
         assertThat(dbIntegration.getBlobId(pageId, municipalityId)).hasValue(blobId);
 
-        verify(pageRepositoryMock).findBlobIdByIdAndMunicipalityId(pageId, municipalityId);
+        verify(pageRepositoryMock).findBlobIdByPageIdAndMunicipalityId(pageId, municipalityId);
         verifyNoMoreInteractions(pageRepositoryMock);
     }
 
@@ -59,7 +59,7 @@ class DbIntegrationTests {
             .withUpdatedAt(updatedAt)
             .build();
 
-        when(pageRepositoryMock.findByIdAndMunicipalityId(pageId, municipalityId)).thenReturn(of(pageEntity));
+        when(pageRepositoryMock.findPageEntityByPageIdAndMunicipalityId(pageId, municipalityId)).thenReturn(of(pageEntity));
 
         var page = dbIntegration.getPage(pageId, municipalityId);
 
@@ -71,7 +71,7 @@ class DbIntegrationTests {
             assertThat(actualPage.updatedAt()).isEqualTo(updatedAt);
         });
 
-        verify(pageRepositoryMock).findByIdAndMunicipalityId(pageId, municipalityId);
+        verify(pageRepositoryMock).findPageEntityByPageIdAndMunicipalityId(pageId, municipalityId);
         verifyNoMoreInteractions(pageRepositoryMock);
     }
 
@@ -112,11 +112,11 @@ class DbIntegrationTests {
         var pageId = "somePageId";
         var municipalityId = "someMunicipalityId";
 
-        doNothing().when(pageRepositoryMock).deleteByIdAndMunicipalityId(pageId, municipalityId);
+        doNothing().when(pageRepositoryMock).deletePageEntityByPageIdAndMunicipalityId(pageId, municipalityId);
 
         dbIntegration.deletePage(pageId, municipalityId);
 
-        verify(pageRepositoryMock).deleteByIdAndMunicipalityId(pageId, municipalityId);
+        verify(pageRepositoryMock).deletePageEntityByPageIdAndMunicipalityId(pageId, municipalityId);
         verifyNoMoreInteractions(pageRepositoryMock);
     }
 }

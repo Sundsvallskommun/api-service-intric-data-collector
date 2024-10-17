@@ -18,11 +18,11 @@ public class DbIntegration {
     }
 
     public Optional<String> getBlobId(final String pageId, final String municipalityId) {
-        return pageRepository.findBlobIdByIdAndMunicipalityId(pageId, municipalityId);
+        return pageRepository.findBlobIdByPageIdAndMunicipalityId(pageId, municipalityId);
     }
 
     public Optional<Page> getPage(final String pageId, final String municipalityId) {
-        return pageRepository.findByIdAndMunicipalityId(pageId, municipalityId)
+        return pageRepository.findPageEntityByPageIdAndMunicipalityId(pageId, municipalityId)
             .map(pageEntity -> PageBuilder.create()
                 .withPageId(pageEntity.getPageId())
                 .withMunicipalityId(pageEntity.getMunicipalityId())
@@ -45,6 +45,6 @@ public class DbIntegration {
     }
     
     public void deletePage(final String pageId, final String municipalityId) {
-        pageRepository.deleteByIdAndMunicipalityId(pageId, municipalityId);
+        pageRepository.deletePageEntityByPageIdAndMunicipalityId(pageId, municipalityId);
     }
 }
