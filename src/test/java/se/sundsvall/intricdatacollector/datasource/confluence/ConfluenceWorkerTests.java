@@ -186,10 +186,6 @@ class ConfluenceWorkerTests {
         var json = "{\"someKey\": \"someValue\"}";
         var updatedAt = "2024-10-17T15:55:43.819+02:00";
 
-        var page = PageBuilder.create()
-            .withUpdatedAt(LocalDateTime.now().minusMonths(1))
-            .build();
-
         var workerSpy = spy(worker);
         var documentContextMock = mock(DocumentContext.class);
 
