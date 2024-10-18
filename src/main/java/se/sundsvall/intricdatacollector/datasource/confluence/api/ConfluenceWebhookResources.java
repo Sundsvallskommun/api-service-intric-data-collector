@@ -1,6 +1,7 @@
 package se.sundsvall.intricdatacollector.datasource.confluence.api;
 
 import static java.util.Optional.ofNullable;
+import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 import static org.zalando.problem.Status.FORBIDDEN;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.zalando.problem.Problem;
 
+import se.sundsvall.dept44.common.validators.annotation.ValidMunicipalityId;
 import se.sundsvall.intricdatacollector.datasource.confluence.ConfluenceDataSource;
 import se.sundsvall.intricdatacollector.datasource.confluence.api.model.ConfluenceWebhookData;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationProperties;
@@ -42,9 +44,10 @@ class ConfluenceWebhookResources {
     @PostMapping(
         value = "/{municipalityId}/confluence/webhook-event",
         consumes = APPLICATION_JSON_VALUE,
-        produces = APPLICATION_JSON_VALUE
+        produces = ALL_VALUE
     )
-    ResponseEntity<Void> handleWebhookEvent(@PathVariable("municipalityId") final String municipalityId, @RequestBody @Valid final ConfluenceWebhookData request) {
+    ResponseEntity<Void> handleWebhookEvent(@PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId,
+            @RequestBody @Valid final ConfluenceWebhookData request) {
         // Manually check if webhooks are enabled for the given municipality
         boolean webhookEnabled = ofNullable(properties.environments().get(municipalityId))
             .map(ConfluenceIntegrationProperties.Environment::webhook)

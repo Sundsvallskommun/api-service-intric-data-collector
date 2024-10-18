@@ -1,33 +1,19 @@
 package se.sundsvall.intricdatacollector.datasource.confluence;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static se.sundsvall.intricdatacollector.datasource.confluence.ConfluenceWorker.ANCESTOR_IDS;
-import static se.sundsvall.intricdatacollector.datasource.confluence.ConfluenceWorker.BASE_URL;
-import static se.sundsvall.intricdatacollector.datasource.confluence.ConfluenceWorker.BODY;
-import static se.sundsvall.intricdatacollector.datasource.confluence.ConfluenceWorker.CHILD_IDS;
-import static se.sundsvall.intricdatacollector.datasource.confluence.ConfluenceWorker.LAST_UPDATED_AT;
-import static se.sundsvall.intricdatacollector.datasource.confluence.ConfluenceWorker.PATH;
-import static se.sundsvall.intricdatacollector.datasource.confluence.ConfluenceWorker.TITLE;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.ParseContext;
-import com.jayway.jsonpath.TypeRef;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,7 +46,11 @@ class ConfluenceWorkerTests {
     @Mock
     private ConfluenceClientRegistry confluenceClientRegistryMock;
     @Mock
-    private ParseContext jsonPathParserMock;
+    private ConfluencePageMapper pageMapperMock;
+    @Mock
+    private JsonUtil jsonUtilMock;
+    @Mock
+    private JsonUtil.Document documentMock;
     @Mock
     private DbIntegration dbIntegrationMock;
     @Mock
@@ -82,7 +72,7 @@ class ConfluenceWorkerTests {
 
         when(confluenceClientRegistryMock.getClient(MUNICIPALITY_ID)).thenReturn(confluenceClientMock);
 
-        worker = new ConfluenceWorker(MUNICIPALITY_ID, propertiesMock, jsonPathParserMock, confluenceClientRegistryMock, intricIntegrationMock, dbIntegrationMock);
+        worker = new ConfluenceWorker(MUNICIPALITY_ID, propertiesMock, confluenceClientRegistryMock, pageMapperMock, intricIntegrationMock, dbIntegrationMock, jsonUtilMock);
     }
 
     @Test
@@ -121,33 +111,31 @@ class ConfluenceWorkerTests {
     @Test
     void processChildren() {
         var pageId = "somePageId";
-        var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
-        var json = "{\"someKey\": \"someValue\"}";
+        var childIds = List.of("someChildId", "someOtherChildId");
+        var pageJson = "{\"someKey\": \"someValue\"}";
 
         var workerSpy = spy(worker);
-        var documentContextMock = mock(DocumentContext.class);
 
-        when(confluenceClientMock.getChildren(pageId)).thenReturn(Optional.of(json));
-        when(jsonPathParserMock.parse(json)).thenReturn(documentContextMock);
-        when(documentContextMock.read(eq(CHILD_IDS), any(TypeRef.class))).thenReturn(ancestorIds);
+        when(confluenceClientMock.getChildren(pageId)).thenReturn(Optional.of(pageJson));
+        when(jsonUtilMock.parse(pageJson)).thenReturn(documentMock);
+        when(documentMock.getChildIds()).thenReturn(childIds);
 
         workerSpy.processChildren(pageId);
 
-        verify(workerSpy).processTree("someAncestorId");
-        verify(workerSpy).processTree("someOtherAncestorId");
+        verify(workerSpy).processTree("someChildId");
+        verify(workerSpy).processTree("someOtherChildId");
     }
 
     @Test
     void processChildrenWhenThereAreNoChildren() {
         var pageId = "somePageId";
-        var json = "{\"someKey\": \"someValue\"}";
+        var pageJson = "{\"someKey\": \"someValue\"}";
 
         var workerSpy = spy(worker);
-        var documentContextMock = mock(DocumentContext.class);
 
-        when(confluenceClientMock.getChildren(pageId)).thenReturn(Optional.of(json));
-        when(jsonPathParserMock.parse(json)).thenReturn(documentContextMock);
-        when(documentContextMock.read(eq(CHILD_IDS), any(TypeRef.class))).thenReturn(List.of());
+        when(confluenceClientMock.getChildren(pageId)).thenReturn(Optional.of(pageJson));
+        when(jsonUtilMock.parse(pageJson)).thenReturn(documentMock);
+        when(documentMock.getChildIds()).thenReturn(List.of());
 
         workerSpy.processChildren(pageId);
 
@@ -157,7 +145,7 @@ class ConfluenceWorkerTests {
     @Test
     void processPage() {
         var pageId = "somePageId";
-        var json = "{\"someKey\": \"someValue\"}";
+        var pageJson = "{\"someKey\": \"someValue\"}";
         var updatedAt = "2024-10-17T15:55:43.819+02:00";
 
         var page = PageBuilder.create()
@@ -165,11 +153,10 @@ class ConfluenceWorkerTests {
             .build();
 
         var workerSpy = spy(worker);
-        var documentContextMock = mock(DocumentContext.class);
 
-        when(confluenceClientMock.getContentVersion(pageId)).thenReturn(Optional.of(json));
-        when(jsonPathParserMock.parse(json)).thenReturn(documentContextMock);
-        when(documentContextMock.read(LAST_UPDATED_AT, String.class)).thenReturn(updatedAt);
+        when(confluenceClientMock.getContentVersion(pageId)).thenReturn(Optional.of(pageJson));
+        when(jsonUtilMock.parse(pageJson)).thenReturn(documentMock);
+        when(documentMock.getUpdatedAt()).thenReturn(updatedAt);
         when(dbIntegrationMock.getPage(pageId, MUNICIPALITY_ID)).thenReturn(Optional.of(page));
 
         workerSpy.processPage(pageId);
@@ -179,20 +166,19 @@ class ConfluenceWorkerTests {
         verify(dbIntegrationMock).getPage(pageId, MUNICIPALITY_ID);
     }
 
-
     @Test
     void processPageWhenPageIsMissingLocally() {
         var pageId = "somePageId";
-        var json = "{\"someKey\": \"someValue\"}";
+        var pageJson = "{\"someKey\": \"someValue\"}";
         var updatedAt = "2024-10-17T15:55:43.819+02:00";
 
         var workerSpy = spy(worker);
-        var documentContextMock = mock(DocumentContext.class);
 
-        when(confluenceClientMock.getContentVersion(pageId)).thenReturn(Optional.of(json));
-        when(jsonPathParserMock.parse(json)).thenReturn(documentContextMock);
-        when(documentContextMock.read(LAST_UPDATED_AT, String.class)).thenReturn(updatedAt);
+        when(confluenceClientMock.getContentVersion(pageId)).thenReturn(Optional.of(pageJson));
+        when(jsonUtilMock.parse(pageJson)).thenReturn(documentMock);
+        when(documentMock.getUpdatedAt()).thenReturn(updatedAt);
         when(dbIntegrationMock.getPage(pageId, MUNICIPALITY_ID)).thenReturn(Optional.empty());
+        when(pageMapperMock.newPage(MUNICIPALITY_ID, pageId)).thenCallRealMethod();
 
         workerSpy.processPage(pageId);
 
@@ -206,18 +192,16 @@ class ConfluenceWorkerTests {
         var pageId = "somePageId";
         var intricGroupId = "someIntricGroupId";
         var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
-        var json = "{\"someKey\": \"someValue\"}";
+        var pageJson = "{\"someKey\": \"someValue\"}";
         var page = PageBuilder.create()
             .withPageId(pageId)
             .withAncestorIds(ancestorIds)
             .build();
 
         var workerSpy = spy(worker);
-        var documentContextMock = mock(DocumentContext.class);
 
-        when(confluenceClientMock.getContent(pageId)).thenReturn(Optional.of(json));
-        when(jsonPathParserMock.parse(json)).thenReturn(documentContextMock);
-        when(workerSpy.toPage(MUNICIPALITY_ID, pageId, documentContextMock)).thenReturn(page);
+        when(confluenceClientMock.getContent(pageId)).thenReturn(Optional.of(pageJson));
+        when(pageMapperMock.toPage(MUNICIPALITY_ID, pageId, pageJson)).thenReturn(page);
         when(workerSpy.isBlacklisted(pageId, ancestorIds)).thenReturn(false);
         when(workerSpy.getIntricGroupId(pageId, ancestorIds)).thenReturn(intricGroupId);
 
@@ -226,8 +210,7 @@ class ConfluenceWorkerTests {
         assertThat(result).hasValueSatisfying(actualResult -> assertThat(actualResult.intricGroupId()).isEqualTo(intricGroupId));
 
         verify(confluenceClientMock).getContent(pageId);
-        verify(jsonPathParserMock).parse(json);
-        verify(workerSpy).toPage(MUNICIPALITY_ID, pageId, documentContextMock);
+        verify(pageMapperMock).toPage(MUNICIPALITY_ID, pageId, pageJson);
         verify(workerSpy).isBlacklisted(pageId, ancestorIds);
         verify(workerSpy).getIntricGroupId(pageId, ancestorIds);
     }
@@ -243,18 +226,15 @@ class ConfluenceWorkerTests {
             .build();
 
         var workerSpy = spy(worker);
-        var documentContextMock = mock(DocumentContext.class);
 
         when(confluenceClientMock.getContent(pageId)).thenReturn(Optional.of(pageJson));
-        when(jsonPathParserMock.parse(pageJson)).thenReturn(documentContextMock);
-        when(workerSpy.toPage(MUNICIPALITY_ID, pageId, documentContextMock)).thenReturn(page);
+        when(pageMapperMock.toPage(MUNICIPALITY_ID, pageId, pageJson)).thenReturn(page);
         when(workerSpy.isBlacklisted(pageId, ancestorIds)).thenReturn(true);
 
         assertThat(workerSpy.getPageFromConfluence(pageId)).isEmpty();
 
         verify(confluenceClientMock).getContent(pageId);
-        verify(jsonPathParserMock).parse(pageJson);
-        verify(workerSpy).toPage(MUNICIPALITY_ID, pageId, documentContextMock);
+        verify(pageMapperMock).toPage(MUNICIPALITY_ID, pageId, pageJson);
         verify(workerSpy).isBlacklisted(pageId, ancestorIds);
     }
 
@@ -269,19 +249,16 @@ class ConfluenceWorkerTests {
             .build();
 
         var workerSpy = spy(worker);
-        var documentContextMock = mock(DocumentContext.class);
 
         when(confluenceClientMock.getContent(pageId)).thenReturn(Optional.of(pageJson));
-        when(jsonPathParserMock.parse(pageJson)).thenReturn(documentContextMock);
-        when(workerSpy.toPage(MUNICIPALITY_ID, pageId, documentContextMock)).thenReturn(page);
+        when(pageMapperMock.toPage(MUNICIPALITY_ID, pageId, pageJson)).thenReturn(page);
         when(workerSpy.isBlacklisted(pageId, ancestorIds)).thenReturn(false);
         when(workerSpy.getIntricGroupId(pageId, ancestorIds)).thenReturn(null);
 
         assertThat(workerSpy.getPageFromConfluence(pageId)).isEmpty();
 
         verify(confluenceClientMock).getContent(pageId);
-        verify(jsonPathParserMock).parse(pageJson);
-        verify(workerSpy).toPage(MUNICIPALITY_ID, pageId, documentContextMock);
+        verify(pageMapperMock).toPage(MUNICIPALITY_ID, pageId, pageJson);
         verify(workerSpy).isBlacklisted(pageId, ancestorIds);
         verify(workerSpy).getIntricGroupId(pageId, ancestorIds);
     }
@@ -396,34 +373,4 @@ class ConfluenceWorkerTests {
         assertThat(worker.getIntricGroupId("somePageId", List.of("unknownChildId", "unknownParentId", "unknownRootId"))).isNull();
     }
 
-    @Test
-    void toPage() {
-        var pageId = "somePageId";
-        var municipalityId = "someMunicipalityId";
-        var title = "someTitle";
-        var body = "someBody";
-        var baseUrl = "someBaseUrl";
-        var path = "somePath";
-        var updatedAt = "2024-12-12T13:13:51.119+02:00";
-        var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
-
-        var documentContextMock = mock(DocumentContext.class);
-        when(documentContextMock.read(TITLE, String.class)).thenReturn(title);
-        when(documentContextMock.read(BODY, String.class)).thenReturn(body);
-        when(documentContextMock.read(BASE_URL, String.class)).thenReturn(baseUrl);
-        when(documentContextMock.read(PATH, String.class)).thenReturn(path);
-        when(documentContextMock.read(LAST_UPDATED_AT, String.class)).thenReturn(updatedAt);
-        when(documentContextMock.read(ANCESTOR_IDS)).thenReturn(ancestorIds);
-
-        var page = worker.toPage(municipalityId, pageId, documentContextMock);
-
-        assertThat(page.pageId()).isEqualTo(pageId);
-        assertThat(page.municipalityId()).isEqualTo(municipalityId);
-        assertThat(page.title()).isEqualTo(title);
-        assertThat(page.body()).isEqualTo(body);
-        assertThat(page.baseUrl()).isEqualTo(baseUrl);
-        assertThat(page.path()).isEqualTo(path);
-        assertThat(page.updatedAt()).isEqualTo(OffsetDateTime.parse(updatedAt).toLocalDateTime());
-        assertThat(page.ancestorIds()).isEqualTo(ancestorIds);
-    }
 }

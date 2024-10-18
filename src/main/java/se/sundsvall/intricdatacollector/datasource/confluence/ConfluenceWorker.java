@@ -1,7 +1,6 @@
 package se.sundsvall.intricdatacollector.datasource.confluence;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -10,11 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.ParseContext;
-import com.jayway.jsonpath.TypeRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import se.sundsvall.intricdatacollector.core.intric.IntricIntegration;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceClient;
@@ -24,37 +21,33 @@ import se.sundsvall.intricdatacollector.datasource.confluence.integration.db.DbI
 import se.sundsvall.intricdatacollector.datasource.confluence.model.Page;
 import se.sundsvall.intricdatacollector.datasource.confluence.model.PageBuilder;
 
+@Transactional
 class ConfluenceWorker implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfluenceWorker.class);
 
-    static final String LAST_UPDATED_AT = "$.version.when";
-    static final String TITLE           = "$.title";
-    static final String BASE_URL        = "$._links.base";
-    static final String PATH            = "$._links.webui";
-    static final String BODY            = "$.body.storage.value";
-    static final String CHILD_IDS       = "$.results..id";
-    static final String ANCESTOR_IDS    = "$.ancestors..id";
-
     private final String municipalityId;
-    private final ParseContext jsonPathParser;
     private final IntricIntegration intricIntegration;
     private final DbIntegration dbIntegration;
+    private final JsonUtil jsonUtil;
 
     private final Map<String, String> mappings;
     private final List<String> blacklistedRootIds;
     private final ConfluenceClient client;
+    private final ConfluencePageMapper pageMapper;
 
     ConfluenceWorker(final String municipalityId,
             final ConfluenceIntegrationProperties properties,
-            final ParseContext jsonPathParser,
             final ConfluenceClientRegistry confluenceClientRegistry,
+            final ConfluencePageMapper pageMapper,
             final IntricIntegration intricIntegration,
-            final DbIntegration dbIntegration) {
+            final DbIntegration dbIntegration,
+            final JsonUtil jsonUtil) {
         this.municipalityId = municipalityId;
+        this.pageMapper = pageMapper;
         this.intricIntegration = intricIntegration;
         this.dbIntegration = dbIntegration;
-        this.jsonPathParser = jsonPathParser;
+        this.jsonUtil = jsonUtil;
 
         // Get a Confluence client for the given municipality id
         client = confluenceClientRegistry.getClient(municipalityId);
@@ -94,10 +87,8 @@ class ConfluenceWorker implements Runnable {
 
     void processChildren(final String pageId) {
         client.getChildren(pageId).ifPresent(json -> {
-            // Parse the JSON page data
-            var jsonDocument = jsonPathParser.parse(json);
             // Extract the id:s of child pages
-            var childPageIds = jsonDocument.read(CHILD_IDS, new TypeRef<List<String>>() {});
+            var childPageIds = jsonUtil.parse(json).getChildIds();
 
             if (childPageIds.isEmpty()) {
                 LOG.info("Page {} has no children (municipalityId: {})", pageId, municipalityId);
@@ -117,26 +108,21 @@ class ConfluenceWorker implements Runnable {
 
         // Get the page version data from Confluence
         client.getContentVersion(pageId).ifPresentOrElse(json -> {
-            // Parse the JSON page data
-            var jsonDocument = jsonPathParser.parse(json);
-            // Extract the last updated at timestamp
-            var lastUpdatedAtAsString = jsonDocument.read(LAST_UPDATED_AT, String.class);
-            var lastUpdatedAtInConfluence = OffsetDateTime.parse(lastUpdatedAtAsString)
+            // Extract the updated at timestamp
+            var updatedAtInConfluenceAsString = jsonUtil.parse(json).getUpdatedAt();
+            var updatedAtInConfluence = OffsetDateTime.parse(updatedAtInConfluenceAsString)
                 .toLocalDateTime()
                 .truncatedTo(SECONDS);
             // Get the current page from the db or create a new one
             var page = dbIntegration.getPage(pageId, municipalityId)
-                .orElseGet(() -> PageBuilder.create()
-                    .withPageId(pageId)
-                    .withMunicipalityId(municipalityId)
-                    .build());
+                .orElseGet(() -> pageMapper.newPage(municipalityId, pageId));
 
             // If no updated-at timestamp is set - insert the page
             // If the updated-at timestamp of the Confluence page is after the locally stored one - update
             // Otherwise - ignore
             if (page.updatedAt() == null) {
                 insertPage(pageId);
-            } else if (lastUpdatedAtInConfluence.isAfter(page.updatedAt())) {
+            } else if (updatedAtInConfluence.isAfter(page.updatedAt())) {
                 updatePage(pageId);
             } else {
                 LOG.info("Not updating current page {} (municipalityId: {})", pageId, municipalityId);
@@ -151,10 +137,8 @@ class ConfluenceWorker implements Runnable {
     Optional<Page> getPageFromConfluence(final String pageId) {
         // Get page data from Confluence
         return client.getContent(pageId).map(json -> {
-            // Parse the JSON page data
-            var jsonDocument = jsonPathParser.parse(json);
             // Extract the page data
-            var page = toPage(municipalityId, pageId, jsonDocument);
+            var page = pageMapper.toPage(municipalityId, pageId, json);
 
             // Skip any blacklisted pages
             if (isBlacklisted(page.pageId(), page.ancestorIds())) {
@@ -211,11 +195,11 @@ class ConfluenceWorker implements Runnable {
         LOG.info("Deleting page {} (municipalityId: {})", pageId, municipalityId);
 
         dbIntegration.getBlobId(pageId, municipalityId).ifPresentOrElse(blobId -> {
-            // Delete the info blob from Intric
-            intricIntegration.deleteInfoBlob(blobId);
-
             // Delete the page
             dbIntegration.deletePage(pageId, municipalityId);
+
+            // Delete the info blob from Intric
+            intricIntegration.deleteInfoBlob(blobId);
 
             LOG.info("The page {} was deleted (municipalityId: {})", pageId, municipalityId);
         }, () -> LOG.info("Unable to delete page {} since it couldn't be found (municipalityId: {})", pageId, municipalityId));
@@ -249,21 +233,5 @@ class ConfluenceWorker implements Runnable {
             .findFirst()
             .map(Map.Entry::getValue)
             .orElse(null);
-    }
-
-    Page toPage(final String municipalityId, final String pageId, final DocumentContext jsonDocument) {
-        return PageBuilder.create()
-            .withMunicipalityId(municipalityId)
-            .withPageId(pageId)
-            .withTitle(jsonDocument.read(TITLE, String.class))
-            .withBody(jsonDocument.read(BODY, String.class))
-            .withBaseUrl(jsonDocument.read(BASE_URL, String.class))
-            .withPath(jsonDocument.read(PATH, String.class))
-            .withUpdatedAt(ofNullable(jsonDocument.read(LAST_UPDATED_AT, String.class))
-                .map(OffsetDateTime::parse)
-                .map(OffsetDateTime::toLocalDateTime)
-                .orElse(null))
-            .withAncestorIds(jsonDocument.read(ANCESTOR_IDS))
-            .build();
     }
 }

@@ -23,100 +23,94 @@ import se.sundsvall.intricdatacollector.datasource.confluence.model.PageBuilder;
 @ExtendWith(MockitoExtension.class)
 class DbIntegrationTests {
 
+    static final String PAGE_ID = "somePageId";
+    static final String MUNICIPALITY_ID = "someMunicipalityId";
+    static final String INTRIC_GROUP_ID = "someIntricGroupId";
+    static final String INTRIC_BLOB_ID = "someIntricBlobId";
+    static final LocalDateTime UPDATED_AT = LocalDateTime.now().minusMonths(3);
+
     @Mock
     private PageRepository pageRepositoryMock;
+    @Mock
+    private PageMapper pageMapperMock;
 
     @InjectMocks
     private DbIntegration dbIntegration;
 
     @Test
     void getBlobId() {
-        var pageId = "somePageId";
-        var municipalityId = "someMunicipalityId";
-        var blobId = "someBlobId";
+        when(pageRepositoryMock.findBlobIdByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID)).thenReturn(of(INTRIC_BLOB_ID));
 
-        when(pageRepositoryMock.findBlobIdByPageIdAndMunicipalityId(pageId, municipalityId)).thenReturn(of(blobId));
+        assertThat(dbIntegration.getBlobId(PAGE_ID, MUNICIPALITY_ID)).hasValue(INTRIC_BLOB_ID);
 
-        assertThat(dbIntegration.getBlobId(pageId, municipalityId)).hasValue(blobId);
-
-        verify(pageRepositoryMock).findBlobIdByPageIdAndMunicipalityId(pageId, municipalityId);
+        verify(pageRepositoryMock).findBlobIdByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID);
         verifyNoMoreInteractions(pageRepositoryMock);
     }
 
     @Test
     void getPage() {
-        var pageId = "somePageId";
-        var municipalityId = "someMunicipalityId";
-        var intricGroupId = "someGroupId";
-        var intricBlobId = "someBlobId";
-        var updatedAt = LocalDateTime.now();
-
         var pageEntity = PageEntityBuilder.create()
-            .withPageId(pageId)
-            .withMunicipalityId(municipalityId)
-            .withIntricGroupId(intricGroupId)
-            .withIntricBlobId(intricBlobId)
-            .withUpdatedAt(updatedAt)
+            .withPageId(PAGE_ID)
+            .withMunicipalityId(MUNICIPALITY_ID)
+            .withIntricGroupId(INTRIC_GROUP_ID)
+            .withIntricBlobId(INTRIC_BLOB_ID)
+            .withUpdatedAt(UPDATED_AT)
             .build();
 
-        when(pageRepositoryMock.findPageEntityByPageIdAndMunicipalityId(pageId, municipalityId)).thenReturn(of(pageEntity));
+        when(pageRepositoryMock.findPageEntityByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID)).thenReturn(of(pageEntity));
+        when(pageMapperMock.toPage(pageEntity)).thenCallRealMethod();
 
-        var page = dbIntegration.getPage(pageId, municipalityId);
+        var page = dbIntegration.getPage(PAGE_ID, MUNICIPALITY_ID);
 
         assertThat(page).isNotEmpty().hasValueSatisfying(actualPage -> {
-            assertThat(actualPage.pageId()).isEqualTo(pageId);
-            assertThat(actualPage.municipalityId()).isEqualTo(municipalityId);
-            assertThat(actualPage.intricGroupId()).isEqualTo(intricGroupId);
-            assertThat(actualPage.intricBlobId()).isEqualTo(intricBlobId);
-            assertThat(actualPage.updatedAt()).isEqualTo(updatedAt);
+            assertThat(actualPage.pageId()).isEqualTo(PAGE_ID);
+            assertThat(actualPage.municipalityId()).isEqualTo(MUNICIPALITY_ID);
+            assertThat(actualPage.intricGroupId()).isEqualTo(INTRIC_GROUP_ID);
+            assertThat(actualPage.intricBlobId()).isEqualTo(INTRIC_BLOB_ID);
+            assertThat(actualPage.updatedAt()).isEqualTo(UPDATED_AT);
         });
 
-        verify(pageRepositoryMock).findPageEntityByPageIdAndMunicipalityId(pageId, municipalityId);
-        verifyNoMoreInteractions(pageRepositoryMock);
+        verify(pageRepositoryMock).findPageEntityByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID);
+        verify(pageMapperMock).toPage(pageEntity);
+        verifyNoMoreInteractions(pageRepositoryMock, pageMapperMock);
     }
 
     @Test
     void savePage() {
-        var pageId = "somePageId";
-        var municipalityId = "someMunicipalityId";
-        var intricGroupId = "someGroupId";
-        var intricBlobId = "someBlobId";
-        var updatedAt = LocalDateTime.now();
-
         var pageEntityCaptor = ArgumentCaptor.forClass(PageEntity.class);
 
         var page = PageBuilder.create()
-            .withPageId(pageId)
-            .withMunicipalityId(municipalityId)
-            .withIntricGroupId(intricGroupId)
-            .withIntricBlobId(intricBlobId)
-            .withUpdatedAt(updatedAt)
+            .withPageId(PAGE_ID)
+            .withMunicipalityId(MUNICIPALITY_ID)
+            .withIntricGroupId(INTRIC_GROUP_ID)
+            .withIntricBlobId(INTRIC_BLOB_ID)
+            .withUpdatedAt(UPDATED_AT)
             .build();
+
+        when(pageMapperMock.toPageEntity(page)).thenCallRealMethod();
 
         dbIntegration.savePage(page);
 
         verify(pageRepositoryMock).save(pageEntityCaptor.capture());
-        verifyNoMoreInteractions(pageRepositoryMock);
+        verify(pageMapperMock).toPageEntity(page);
+        verifyNoMoreInteractions(pageRepositoryMock, pageMapperMock);
 
         assertThat(pageEntityCaptor.getValue()).satisfies(pageEntity -> {
-            assertThat(pageEntity.getPageId()).isEqualTo(pageId);
-            assertThat(pageEntity.getMunicipalityId()).isEqualTo(municipalityId);
-            assertThat(pageEntity.getIntricGroupId()).isEqualTo(intricGroupId);
-            assertThat(pageEntity.getIntricBlobId()).isEqualTo(intricBlobId);
-            assertThat(pageEntity.getUpdatedAt()).isEqualTo(updatedAt);
+            assertThat(pageEntity.getPageId()).isEqualTo(PAGE_ID);
+            assertThat(pageEntity.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
+            assertThat(pageEntity.getIntricGroupId()).isEqualTo(INTRIC_GROUP_ID);
+            assertThat(pageEntity.getIntricBlobId()).isEqualTo(INTRIC_BLOB_ID);
+            assertThat(pageEntity.getUpdatedAt()).isEqualTo(UPDATED_AT);
         });
     }
 
     @Test
     void deletePage() {
-        var pageId = "somePageId";
-        var municipalityId = "someMunicipalityId";
+        doNothing().when(pageRepositoryMock).deletePageEntityByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID);
 
-        doNothing().when(pageRepositoryMock).deletePageEntityByPageIdAndMunicipalityId(pageId, municipalityId);
+        dbIntegration.deletePage(PAGE_ID, MUNICIPALITY_ID);
 
-        dbIntegration.deletePage(pageId, municipalityId);
-
-        verify(pageRepositoryMock).deletePageEntityByPageIdAndMunicipalityId(pageId, municipalityId);
+        verify(pageRepositoryMock).deletePageEntityByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID);
         verifyNoMoreInteractions(pageRepositoryMock);
     }
 }

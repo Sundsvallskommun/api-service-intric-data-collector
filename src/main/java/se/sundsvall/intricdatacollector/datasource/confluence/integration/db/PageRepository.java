@@ -11,7 +11,7 @@ import se.sundsvall.intricdatacollector.datasource.confluence.integration.db.mod
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 @CircuitBreaker(name = "pageRepository")
-public interface PageRepository extends JpaRepository<PageEntity, String> {
+interface PageRepository extends JpaRepository<PageEntity, String> {
 
     @Query(value = "SELECT p.blob_id FROM confluence_pages AS p WHERE p.page_id = :pageId AND p.municipality_id = :municipalityId", nativeQuery = true)
     Optional<String> findBlobIdByPageIdAndMunicipalityId(@Param("pageId") String pageId, @Param("municipalityId") String municipalityId);

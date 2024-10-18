@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import java.time.Duration;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +51,11 @@ class ConfluenceDataSourceTests {
     @Mock
     private ConfluenceIntegrationProperties.Environment.Scheduling schedulingMock2;
     @Mock
+    private JsonUtil jsonUtilMock;
+    @Mock
     private ConfluenceClientRegistry confluenceClientRegistryMock;
+    @Mock
+    private ConfluencePageMapper confluencePageMapperMock;
     @Mock
     private DbIntegration dbIntegrationMock;
     @Mock
@@ -83,6 +86,11 @@ class ConfluenceDataSourceTests {
         when(schedulingMock2.enabled()).thenReturn(false);
     }
 
+    private ConfluenceDataSource createDataSource() {
+        return new ConfluenceDataSource(propertiesMock, confluenceClientRegistryMock, confluencePageMapperMock,
+            dbIntegrationMock, intricIntegrationMock,jsonUtilMock, taskSchedulerMock, lockProviderMock);
+    }
+
     @Test
     void creationAndScheduling() {
         try (var defaultLockingTaskExecutorMock = mockConstruction(DefaultLockingTaskExecutor.class);
@@ -92,7 +100,7 @@ class ConfluenceDataSourceTests {
              var lockableTaskScheduler = mockConstruction(LockableTaskScheduler.class);
              var workerMock = mockConstruction(ConfluenceWorker.class)) {
             // Create the data source
-            dataSource = new ConfluenceDataSource(propertiesMock, confluenceClientRegistryMock, dbIntegrationMock, intricIntegrationMock, new ObjectMapper(), taskSchedulerMock, lockProviderMock);
+            dataSource = createDataSource();
 
             // Verify mock interactions
             verify(propertiesMock).environments();
@@ -119,7 +127,7 @@ class ConfluenceDataSourceTests {
     void insertPage() {
         try (var workerMock = mockConstruction(ConfluenceWorker.class)) {
             // Create the data source
-            dataSource = new ConfluenceDataSource(propertiesMock, confluenceClientRegistryMock, dbIntegrationMock, intricIntegrationMock, new ObjectMapper(), taskSchedulerMock, lockProviderMock);
+            dataSource = createDataSource();
 
             // Insert the page
             dataSource.insertPage(MUNICIPALITY_ID_1, PAGE_ID);
@@ -135,7 +143,7 @@ class ConfluenceDataSourceTests {
     void updatePage() {
         try (var workerMock = mockConstruction(ConfluenceWorker.class)) {
             // Create the data source
-            dataSource = new ConfluenceDataSource(propertiesMock, confluenceClientRegistryMock, dbIntegrationMock, intricIntegrationMock, new ObjectMapper(), taskSchedulerMock, lockProviderMock);
+            dataSource = createDataSource();
 
             // Update the page
             dataSource.updatePage(MUNICIPALITY_ID_1, PAGE_ID);
@@ -151,7 +159,7 @@ class ConfluenceDataSourceTests {
     void deletePage() {
         try (var workerMock = mockConstruction(ConfluenceWorker.class)) {
             // Create the data source
-            dataSource = new ConfluenceDataSource(propertiesMock, confluenceClientRegistryMock, dbIntegrationMock, intricIntegrationMock, new ObjectMapper(), taskSchedulerMock, lockProviderMock);
+            dataSource = createDataSource();
 
             // Delete the page
             dataSource.deletePage(MUNICIPALITY_ID_1, PAGE_ID);

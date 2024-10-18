@@ -1,6 +1,5 @@
 package se.sundsvall.intricdatacollector.datasource.confluence;
 
-import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
 import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 
 import java.time.Duration;
@@ -9,11 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.TaskScheduler;
@@ -41,22 +35,17 @@ public class ConfluenceDataSource {
 
     ConfluenceDataSource(final ConfluenceIntegrationProperties properties,
             final ConfluenceClientRegistry confluenceClientRegistry,
+            final ConfluencePageMapper confluencePageMapper,
             final DbIntegration dbIntegration,
             final IntricIntegration intricIntegration,
-            final ObjectMapper objectMapper,
+            final JsonUtil jsonUtil,
             final TaskScheduler taskScheduler,
             final LockProvider lockProvider) {
-        // Create a JsonPath parser
-        var jsonPathParser = JsonPath.using(Configuration.defaultConfiguration()
-            .jsonProvider(new JacksonJsonProvider(objectMapper))
-            .mappingProvider(new JacksonMappingProvider(objectMapper))
-            .addOptions(SUPPRESS_EXCEPTIONS));
-
         var executor = new DefaultLockingTaskExecutor(lockProvider);
 
         properties.environments().forEach((municipalityId, environment) -> {
             // Create a worker for the current environment
-            var worker = new ConfluenceWorker(municipalityId, properties, jsonPathParser, confluenceClientRegistry, intricIntegration, dbIntegration);
+            var worker = new ConfluenceWorker(municipalityId, properties, confluenceClientRegistry, confluencePageMapper, intricIntegration, dbIntegration, jsonUtil);
             // "Cache" the worker
             workers.put(municipalityId, worker);
 
