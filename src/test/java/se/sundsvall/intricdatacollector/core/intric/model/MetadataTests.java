@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 class MetadataTests {
 
     @Test
-    void testCreationAndAccessors() {
+    void creationAndAccessors() {
         var title = "someTitle";
         var url = "someUrl";
 

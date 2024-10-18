@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 import static se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationConfiguration.CLIENT_ID;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -58,16 +60,21 @@ class ConfluenceClientRegistryTests {
         verifyNoMoreInteractions(applicationContextMock);
     }
 
-    private class DummyClient implements ConfluenceClient {
+    private static class DummyClient implements ConfluenceClient {
 
         @Override
-        public String getContent(final String pageId) {
-            return "";
+        public Optional<String> getContent(final String pageId) {
+            return Optional.of("");
         }
 
         @Override
-        public String getChildren(final String pageId) {
-            return "";
+        public Optional<String> getChildren(final String pageId) {
+            return Optional.of("");
+        }
+
+        @Override
+        public Optional<String> getContentVersion(final String pageId) {
+            return Optional.of("");
         }
     }
 }

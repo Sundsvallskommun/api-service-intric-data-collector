@@ -16,7 +16,7 @@ class IntricIntegrationPropertiesTests {
     private IntricIntegrationProperties properties;
 
     @Test
-    void testProperties() {
+    void propertiesAreSet() {
         assertThat(properties.baseUrl()).isEqualTo("someBaseUrl");
         assertThat(properties.oauth2()).satisfies(oauth2 -> {
             assertThat(oauth2.tokenUrl()).isEqualTo("someTokenUrl");

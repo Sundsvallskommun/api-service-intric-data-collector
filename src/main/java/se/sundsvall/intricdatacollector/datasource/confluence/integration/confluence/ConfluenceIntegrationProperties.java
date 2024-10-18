@@ -1,5 +1,6 @@
 package se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -25,10 +26,9 @@ public record ConfluenceIntegrationProperties(Map<String, Environment> environme
         @NotNull
         BasicAuthentication basicAuth,
 
-        WebhookSecurity webhookSecurity,
+        Scheduling scheduling,
 
-        @DefaultValue("false")
-        boolean doInitialImport,
+        Webhook webhook,
 
         @DefaultValue
         List<@NotBlank String> blacklistedRootIds,
@@ -42,10 +42,27 @@ public record ConfluenceIntegrationProperties(Map<String, Environment> environme
         @DefaultValue("20")
         int readTimeoutInSeconds) {
 
-        public record Mapping(@NotBlank String intricGroupId, @NotBlank String rootId) {
-        }
+        public record Mapping(
+            @NotBlank
+            String intricGroupId,
 
-        public record WebhookSecurity(String secret, boolean enabled) {
+            @NotBlank
+            String rootId) { }
+
+        public record Scheduling(
+
+            @DefaultValue("true")
+            boolean enabled,
+
+            @NotBlank
+            String cronExpression,
+
+            @DefaultValue("PT2M")
+            Duration lockAtMostFor) { }
+
+        public record Webhook(boolean enabled, WebhookSecurity security) {
+
+            public record WebhookSecurity(String secret, boolean enabled) { }
         }
 
         public record BasicAuthentication(
