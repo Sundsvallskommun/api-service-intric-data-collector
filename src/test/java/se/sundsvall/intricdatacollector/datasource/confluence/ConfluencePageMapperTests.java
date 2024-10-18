@@ -17,9 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ConfluencePageMapperTests {
 
     @Mock
-    private JsonUtil jsonUtilMock;
+    private PageJsonParser pageJsonParserMock;
     @Mock
-    private JsonUtil.Document documentMock;
+    private PageJsonParser.PageJson pageJsonMock;
 
     @InjectMocks
     private ConfluencePageMapper pageMapper;
@@ -48,13 +48,13 @@ class ConfluencePageMapperTests {
         var updatedAt = OffsetDateTime.now().minusDays(4);
         var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
 
-        when(jsonUtilMock.parse(json)).thenReturn(documentMock);
-        when(documentMock.getTitle()).thenReturn(title);
-        when(documentMock.getBody()).thenReturn(body);
-        when(documentMock.getBaseUrl()).thenReturn(baseUrl);
-        when(documentMock.getPath()).thenReturn(path);
-        when(documentMock.getUpdatedAt()).thenReturn(updatedAt.toString());
-        when(documentMock.getAncestorIds()).thenReturn(ancestorIds);
+        when(pageJsonParserMock.parse(json)).thenReturn(pageJsonMock);
+        when(pageJsonMock.getTitle()).thenReturn(title);
+        when(pageJsonMock.getBody()).thenReturn(body);
+        when(pageJsonMock.getBaseUrl()).thenReturn(baseUrl);
+        when(pageJsonMock.getPath()).thenReturn(path);
+        when(pageJsonMock.getUpdatedAt()).thenReturn(updatedAt.toString());
+        when(pageJsonMock.getAncestorIds()).thenReturn(ancestorIds);
 
         assertThat(pageMapper.toPage(municipalityId, pageId, json)).satisfies(page -> {
             assertThat(page.pageId()).isEqualTo(pageId);
@@ -67,13 +67,13 @@ class ConfluencePageMapperTests {
             assertThat(page.ancestorIds()).isEqualTo(ancestorIds);
         });
 
-        verify(jsonUtilMock).parse(json);
-        verify(documentMock).getTitle();
-        verify(documentMock).getBody();
-        verify(documentMock).getBaseUrl();
-        verify(documentMock).getPath();
-        verify(documentMock).getUpdatedAt();
-        verify(documentMock).getAncestorIds();
+        verify(pageJsonParserMock).parse(json);
+        verify(pageJsonMock).getTitle();
+        verify(pageJsonMock).getBody();
+        verify(pageJsonMock).getBaseUrl();
+        verify(pageJsonMock).getPath();
+        verify(pageJsonMock).getUpdatedAt();
+        verify(pageJsonMock).getAncestorIds();
     }
 
     @Test
@@ -82,8 +82,8 @@ class ConfluencePageMapperTests {
         var pageId = "somePageId";
         var municipalityId = "someMunicipalityId";
 
-        when(jsonUtilMock.parse(json)).thenReturn(documentMock);
-        when(documentMock.getUpdatedAt()).thenReturn(null);
+        when(pageJsonParserMock.parse(json)).thenReturn(pageJsonMock);
+        when(pageJsonMock.getUpdatedAt()).thenReturn(null);
 
         var page = pageMapper.toPage(municipalityId, pageId, json);
 

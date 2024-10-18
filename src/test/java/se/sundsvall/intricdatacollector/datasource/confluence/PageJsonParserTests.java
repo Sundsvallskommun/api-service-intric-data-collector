@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static se.sundsvall.intricdatacollector.datasource.confluence.JsonUtil.ANCESTOR_IDS;
-import static se.sundsvall.intricdatacollector.datasource.confluence.JsonUtil.BASE_URL;
-import static se.sundsvall.intricdatacollector.datasource.confluence.JsonUtil.BODY;
-import static se.sundsvall.intricdatacollector.datasource.confluence.JsonUtil.CHILD_IDS;
-import static se.sundsvall.intricdatacollector.datasource.confluence.JsonUtil.PATH;
-import static se.sundsvall.intricdatacollector.datasource.confluence.JsonUtil.TITLE;
-import static se.sundsvall.intricdatacollector.datasource.confluence.JsonUtil.UPDATED_AT;
+import static se.sundsvall.intricdatacollector.datasource.confluence.PageJsonParser.ANCESTOR_IDS;
+import static se.sundsvall.intricdatacollector.datasource.confluence.PageJsonParser.BASE_URL;
+import static se.sundsvall.intricdatacollector.datasource.confluence.PageJsonParser.BODY;
+import static se.sundsvall.intricdatacollector.datasource.confluence.PageJsonParser.CHILD_IDS;
+import static se.sundsvall.intricdatacollector.datasource.confluence.PageJsonParser.PATH;
+import static se.sundsvall.intricdatacollector.datasource.confluence.PageJsonParser.TITLE;
+import static se.sundsvall.intricdatacollector.datasource.confluence.PageJsonParser.UPDATED_AT;
 
 import java.util.List;
 
@@ -23,16 +23,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class JsonUtilTests {
+class PageJsonParserTests {
 
     @Nested
-    class DocumentTests {
+    class PageJsonTests {
 
         @Mock
         private DocumentContext documentContextMock;
 
         @InjectMocks
-        private JsonUtil.Document document;
+        private PageJsonParser.PageJson pageJson;
 
         @Test
         void getTitle() {
@@ -40,7 +40,7 @@ class JsonUtilTests {
 
             when(documentContextMock.read(TITLE)).thenReturn(title);
 
-            assertThat(document.getTitle()).isEqualTo(title);
+            assertThat(pageJson.getTitle()).isEqualTo(title);
 
             verify(documentContextMock).read(TITLE);
             verifyNoMoreInteractions(documentContextMock);
@@ -52,7 +52,7 @@ class JsonUtilTests {
 
             when(documentContextMock.read(BODY)).thenReturn(body);
 
-            assertThat(document.getBody()).isEqualTo(body);
+            assertThat(pageJson.getBody()).isEqualTo(body);
 
             verify(documentContextMock).read(BODY);
             verifyNoMoreInteractions(documentContextMock);
@@ -64,7 +64,7 @@ class JsonUtilTests {
 
             when(documentContextMock.read(BASE_URL)).thenReturn(baseUrl);
 
-            assertThat(document.getBaseUrl()).isEqualTo(baseUrl);
+            assertThat(pageJson.getBaseUrl()).isEqualTo(baseUrl);
 
             verify(documentContextMock).read(BASE_URL);
             verifyNoMoreInteractions(documentContextMock);
@@ -76,7 +76,7 @@ class JsonUtilTests {
 
             when(documentContextMock.read(PATH)).thenReturn(path);
 
-            assertThat(document.getPath()).isEqualTo(path);
+            assertThat(pageJson.getPath()).isEqualTo(path);
 
             verify(documentContextMock).read(PATH);
             verifyNoMoreInteractions(documentContextMock);
@@ -88,7 +88,7 @@ class JsonUtilTests {
 
             when(documentContextMock.read(ANCESTOR_IDS)).thenReturn(ancestorIds);
 
-            assertThat(document.getAncestorIds()).isEqualTo(ancestorIds);
+            assertThat(pageJson.getAncestorIds()).isEqualTo(ancestorIds);
 
             verify(documentContextMock).read(ANCESTOR_IDS);
             verifyNoMoreInteractions(documentContextMock);
@@ -100,7 +100,7 @@ class JsonUtilTests {
 
             when(documentContextMock.read(CHILD_IDS)).thenReturn(childIds);
 
-            assertThat(document.getChildIds()).isEqualTo(childIds);
+            assertThat(pageJson.getChildIds()).isEqualTo(childIds);
 
             verify(documentContextMock).read(CHILD_IDS);
             verifyNoMoreInteractions(documentContextMock);
@@ -112,7 +112,7 @@ class JsonUtilTests {
 
             when(documentContextMock.read(UPDATED_AT)).thenReturn(updatedAt);
 
-            assertThat(document.getUpdatedAt()).isEqualTo(updatedAt);
+            assertThat(pageJson.getUpdatedAt()).isEqualTo(updatedAt);
 
             verify(documentContextMock).read(UPDATED_AT);
             verifyNoMoreInteractions(documentContextMock);

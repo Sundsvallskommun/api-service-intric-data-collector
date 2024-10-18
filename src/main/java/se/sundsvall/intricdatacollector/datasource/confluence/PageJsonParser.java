@@ -14,7 +14,7 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.springframework.stereotype.Component;
 
 @Component
-class JsonUtil {
+class PageJsonParser {
 
     static final String TITLE           = "$.title";
     static final String BODY            = "$.body.storage.value";
@@ -26,22 +26,22 @@ class JsonUtil {
 
     private final ParseContext parseContext;
 
-    JsonUtil(final ObjectMapper objectMapper) {
+    PageJsonParser(final ObjectMapper objectMapper) {
         parseContext = JsonPath.using(Configuration.defaultConfiguration()
             .jsonProvider(new JacksonJsonProvider(objectMapper))
             .mappingProvider(new JacksonMappingProvider(objectMapper))
             .addOptions(SUPPRESS_EXCEPTIONS));
     }
 
-    Document parse(final String json) {
-        return new Document(parseContext.parse(json));
+    PageJson parse(final String json) {
+        return new PageJson(parseContext.parse(json));
     }
 
-    static class Document {
+    static class PageJson {
 
         private final DocumentContext documentContext;
 
-        private Document(final DocumentContext documentContext) {
+        private PageJson(final DocumentContext documentContext) {
             this.documentContext = documentContext;
         }
 

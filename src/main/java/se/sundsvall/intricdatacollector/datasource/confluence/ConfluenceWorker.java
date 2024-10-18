@@ -29,7 +29,7 @@ class ConfluenceWorker implements Runnable {
     private final String municipalityId;
     private final IntricIntegration intricIntegration;
     private final DbIntegration dbIntegration;
-    private final JsonUtil jsonUtil;
+    private final PageJsonParser pageJsonParser;
 
     private final Map<String, String> mappings;
     private final List<String> blacklistedRootIds;
@@ -42,12 +42,12 @@ class ConfluenceWorker implements Runnable {
             final ConfluencePageMapper pageMapper,
             final IntricIntegration intricIntegration,
             final DbIntegration dbIntegration,
-            final JsonUtil jsonUtil) {
+            final PageJsonParser pageJsonParser) {
         this.municipalityId = municipalityId;
         this.pageMapper = pageMapper;
         this.intricIntegration = intricIntegration;
         this.dbIntegration = dbIntegration;
-        this.jsonUtil = jsonUtil;
+        this.pageJsonParser = pageJsonParser;
 
         // Get a Confluence client for the given municipality id
         client = confluenceClientRegistry.getClient(municipalityId);
@@ -88,7 +88,7 @@ class ConfluenceWorker implements Runnable {
     void processChildren(final String pageId) {
         client.getChildren(pageId).ifPresent(json -> {
             // Extract the id:s of child pages
-            var childPageIds = jsonUtil.parse(json).getChildIds();
+            var childPageIds = pageJsonParser.parse(json).getChildIds();
 
             if (childPageIds.isEmpty()) {
                 LOG.info("Page {} has no children (municipalityId: {})", pageId, municipalityId);
@@ -109,7 +109,7 @@ class ConfluenceWorker implements Runnable {
         // Get the page version data from Confluence
         client.getContentVersion(pageId).ifPresentOrElse(json -> {
             // Extract the updated at timestamp
-            var updatedAtInConfluenceAsString = jsonUtil.parse(json).getUpdatedAt();
+            var updatedAtInConfluenceAsString = pageJsonParser.parse(json).getUpdatedAt();
             var updatedAtInConfluence = OffsetDateTime.parse(updatedAtInConfluenceAsString)
                 .toLocalDateTime()
                 .truncatedTo(SECONDS);

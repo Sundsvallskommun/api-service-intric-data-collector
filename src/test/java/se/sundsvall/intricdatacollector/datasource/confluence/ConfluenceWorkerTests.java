@@ -48,9 +48,9 @@ class ConfluenceWorkerTests {
     @Mock
     private ConfluencePageMapper pageMapperMock;
     @Mock
-    private JsonUtil jsonUtilMock;
+    private PageJsonParser pageJsonParserMock;
     @Mock
-    private JsonUtil.Document documentMock;
+    private PageJsonParser.PageJson pageJsonMock;
     @Mock
     private DbIntegration dbIntegrationMock;
     @Mock
@@ -72,7 +72,7 @@ class ConfluenceWorkerTests {
 
         when(confluenceClientRegistryMock.getClient(MUNICIPALITY_ID)).thenReturn(confluenceClientMock);
 
-        worker = new ConfluenceWorker(MUNICIPALITY_ID, propertiesMock, confluenceClientRegistryMock, pageMapperMock, intricIntegrationMock, dbIntegrationMock, jsonUtilMock);
+        worker = new ConfluenceWorker(MUNICIPALITY_ID, propertiesMock, confluenceClientRegistryMock, pageMapperMock, intricIntegrationMock, dbIntegrationMock, pageJsonParserMock);
     }
 
     @Test
@@ -117,8 +117,8 @@ class ConfluenceWorkerTests {
         var workerSpy = spy(worker);
 
         when(confluenceClientMock.getChildren(pageId)).thenReturn(Optional.of(pageJson));
-        when(jsonUtilMock.parse(pageJson)).thenReturn(documentMock);
-        when(documentMock.getChildIds()).thenReturn(childIds);
+        when(pageJsonParserMock.parse(pageJson)).thenReturn(pageJsonMock);
+        when(pageJsonMock.getChildIds()).thenReturn(childIds);
 
         workerSpy.processChildren(pageId);
 
@@ -134,8 +134,8 @@ class ConfluenceWorkerTests {
         var workerSpy = spy(worker);
 
         when(confluenceClientMock.getChildren(pageId)).thenReturn(Optional.of(pageJson));
-        when(jsonUtilMock.parse(pageJson)).thenReturn(documentMock);
-        when(documentMock.getChildIds()).thenReturn(List.of());
+        when(pageJsonParserMock.parse(pageJson)).thenReturn(pageJsonMock);
+        when(pageJsonMock.getChildIds()).thenReturn(List.of());
 
         workerSpy.processChildren(pageId);
 
@@ -155,8 +155,8 @@ class ConfluenceWorkerTests {
         var workerSpy = spy(worker);
 
         when(confluenceClientMock.getContentVersion(pageId)).thenReturn(Optional.of(pageJson));
-        when(jsonUtilMock.parse(pageJson)).thenReturn(documentMock);
-        when(documentMock.getUpdatedAt()).thenReturn(updatedAt);
+        when(pageJsonParserMock.parse(pageJson)).thenReturn(pageJsonMock);
+        when(pageJsonMock.getUpdatedAt()).thenReturn(updatedAt);
         when(dbIntegrationMock.getPage(pageId, MUNICIPALITY_ID)).thenReturn(Optional.of(page));
 
         workerSpy.processPage(pageId);
@@ -175,8 +175,8 @@ class ConfluenceWorkerTests {
         var workerSpy = spy(worker);
 
         when(confluenceClientMock.getContentVersion(pageId)).thenReturn(Optional.of(pageJson));
-        when(jsonUtilMock.parse(pageJson)).thenReturn(documentMock);
-        when(documentMock.getUpdatedAt()).thenReturn(updatedAt);
+        when(pageJsonParserMock.parse(pageJson)).thenReturn(pageJsonMock);
+        when(pageJsonMock.getUpdatedAt()).thenReturn(updatedAt);
         when(dbIntegrationMock.getPage(pageId, MUNICIPALITY_ID)).thenReturn(Optional.empty());
         when(pageMapperMock.newPage(MUNICIPALITY_ID, pageId)).thenCallRealMethod();
 

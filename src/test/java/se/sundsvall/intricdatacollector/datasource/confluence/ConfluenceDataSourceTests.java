@@ -51,7 +51,7 @@ class ConfluenceDataSourceTests {
     @Mock
     private ConfluenceIntegrationProperties.Environment.Scheduling schedulingMock2;
     @Mock
-    private JsonUtil jsonUtilMock;
+    private PageJsonParser pageJsonParserMock;
     @Mock
     private ConfluenceClientRegistry confluenceClientRegistryMock;
     @Mock
@@ -88,7 +88,7 @@ class ConfluenceDataSourceTests {
 
     private ConfluenceDataSource createDataSource() {
         return new ConfluenceDataSource(propertiesMock, confluenceClientRegistryMock, confluencePageMapperMock,
-            dbIntegrationMock, intricIntegrationMock,jsonUtilMock, taskSchedulerMock, lockProviderMock);
+            dbIntegrationMock, intricIntegrationMock, pageJsonParserMock, taskSchedulerMock, lockProviderMock);
     }
 
     @Test

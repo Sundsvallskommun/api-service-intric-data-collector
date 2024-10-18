@@ -12,10 +12,10 @@ import se.sundsvall.intricdatacollector.datasource.confluence.model.PageBuilder;
 @Component
 class ConfluencePageMapper {
 
-    private final JsonUtil jsonUtil;
+    private final PageJsonParser pageJsonParser;
 
-    ConfluencePageMapper(final JsonUtil jsonUtil) {
-        this.jsonUtil = jsonUtil;
+    ConfluencePageMapper(final PageJsonParser pageJsonParser) {
+        this.pageJsonParser = pageJsonParser;
     }
 
     Page newPage(final String municipalityId, final String pageId) {
@@ -26,20 +26,20 @@ class ConfluencePageMapper {
     }
 
     Page toPage(final String municipalityId, final String pageId, final String json) {
-        var document = jsonUtil.parse(json);
+        var pageJson = pageJsonParser.parse(json);
 
         return PageBuilder.create()
             .withMunicipalityId(municipalityId)
             .withPageId(pageId)
-            .withTitle(document.getTitle())
-            .withBody(document.getBody())
-            .withBaseUrl(document.getBaseUrl())
-            .withPath(document.getPath())
-            .withUpdatedAt(ofNullable(document.getUpdatedAt())
+            .withTitle(pageJson.getTitle())
+            .withBody(pageJson.getBody())
+            .withBaseUrl(pageJson.getBaseUrl())
+            .withPath(pageJson.getPath())
+            .withUpdatedAt(ofNullable(pageJson.getUpdatedAt())
                 .map(OffsetDateTime::parse)
                 .map(OffsetDateTime::toLocalDateTime)
                 .orElse(null))
-            .withAncestorIds(document.getAncestorIds())
+            .withAncestorIds(pageJson.getAncestorIds())
             .build();
     }
 }

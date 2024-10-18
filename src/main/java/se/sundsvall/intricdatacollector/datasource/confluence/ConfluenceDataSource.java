@@ -38,14 +38,14 @@ public class ConfluenceDataSource {
             final ConfluencePageMapper confluencePageMapper,
             final DbIntegration dbIntegration,
             final IntricIntegration intricIntegration,
-            final JsonUtil jsonUtil,
+            final PageJsonParser pageJsonParser,
             final TaskScheduler taskScheduler,
             final LockProvider lockProvider) {
         var executor = new DefaultLockingTaskExecutor(lockProvider);
 
         properties.environments().forEach((municipalityId, environment) -> {
             // Create a worker for the current environment
-            var worker = new ConfluenceWorker(municipalityId, properties, confluenceClientRegistry, confluencePageMapper, intricIntegration, dbIntegration, jsonUtil);
+            var worker = new ConfluenceWorker(municipalityId, properties, confluenceClientRegistry, confluencePageMapper, intricIntegration, dbIntegration, pageJsonParser);
             // "Cache" the worker
             workers.put(municipalityId, worker);
 
