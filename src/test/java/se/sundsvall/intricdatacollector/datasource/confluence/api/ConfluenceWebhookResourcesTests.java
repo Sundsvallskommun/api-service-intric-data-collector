@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
@@ -77,6 +78,7 @@ class ConfluenceWebhookResourcesTests {
             .header("x-hub-signature", createHmacSignature(request))
             .exchange()
             .expectStatus().isOk()
+            .expectHeader().contentType(ALL_VALUE)
             .expectBody().isEmpty();
 
         switch (eventType) {

@@ -1,6 +1,7 @@
 package se.sundsvall.intricdatacollector.datasource.confluence.api;
 
 import static java.util.Optional.ofNullable;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
@@ -66,6 +67,6 @@ class ConfluenceWebhookResources {
             case PAGE_REMOVED -> dataSource.deletePage(municipalityId, pageId);
         }
 
-        return ok().build();
+        return ok().header(CONTENT_TYPE, ALL_VALUE).build();
     }
 }
