@@ -1,0 +1,61 @@
+{
+  "id": "98381",
+  "type": "page",
+  "status": "current",
+  "title": "Some root page",
+  "version": {
+    "by": {
+      "type": "known",
+      "username": "apiuser",
+      "userKey": "2c95808391e4e42e0191e4e5550c0000",
+      "profilePicture": {
+        "path": "/images/icons/profilepics/default.svg",
+        "width": 48,
+        "height": 48,
+        "isDefault": true
+      },
+      "displayName": "API User",
+      "_links": {
+        "self": "http://localhost:8090/rest/api/user?key=2c95808391e4e42e0191e4e5550c0000"
+      },
+      "_expandable": {
+        "status": ""
+      }
+    },
+    "when": "2024-09-16T11:18:52.825Z",
+    "message": "",
+    "number": 5,
+    "minorEdit": false,
+    "hidden": false,
+    "_links": {
+      "self": "http://localhost:8090/rest/experimental/content/98381/version/5"
+    },
+    "_expandable": {
+      "content": "/rest/api/content/98381"
+    }
+  },
+  "extensions": {
+    "position": "none"
+  },
+  "_links": {
+    "webui": "/display/TEST/Some+root+page",
+    "edit": "/pages/resumedraft.action?draftId=98381&draftShareId=02dc8083-14e8-442a-91e3-c1d303526e00",
+    "tinyui": "/x/TYAB",
+    "collection": "/rest/api/content",
+    "base": "http://localhost:8090",
+    "context": "",
+    "self": "http://localhost:8090/rest/api/content/98381"
+  },
+  "_expandable": {
+    "container": "/rest/api/space/TEST",
+    "metadata": "",
+    "operations": "",
+    "children": "/rest/api/content/98381/child",
+    "restrictions": "/rest/api/content/98381/restriction/byOperation",
+    "history": "/rest/api/content/98381/history",
+    "ancestors": "",
+    "body": "",
+    "descendants": "/rest/api/content/98381/descendant",
+    "space": "/rest/api/space/TEST"
+  }
+}
