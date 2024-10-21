@@ -1,0 +1,68 @@
+{
+  "results": [
+    {
+      "id": "1212426",
+      "type": "page",
+      "status": "current",
+      "title": "Prohibited root page",
+      "extensions": {
+        "position": "none"
+      },
+      "_links": {
+        "webui": "/display/TEST/Prohibited+root+page",
+        "edit": "/pages/resumedraft.action?draftId=1212426&draftShareId=0704d833-3c6c-4ec0-b1b0-31b48f79b3e5",
+        "tinyui": "/x/CoAS",
+        "self": "http://localhost:8090/rest/api/content/1212426"
+      },
+      "_expandable": {
+        "container": "/rest/api/space/TEST",
+        "metadata": "",
+        "operations": "",
+        "children": "/rest/api/content/1212426/child",
+        "restrictions": "/rest/api/content/1212426/restriction/byOperation",
+        "history": "/rest/api/content/1212426/history",
+        "ancestors": "",
+        "body": "",
+        "version": "",
+        "descendants": "/rest/api/content/1212426/descendant",
+        "space": "/rest/api/space/TEST"
+      }
+    },
+    {
+      "id": "98381",
+      "type": "page",
+      "status": "current",
+      "title": "Some root page",
+      "extensions": {
+        "position": "none"
+      },
+      "_links": {
+        "webui": "/display/TEST/Some+root+page",
+        "edit": "/pages/resumedraft.action?draftId=98381&draftShareId=02dc8083-14e8-442a-91e3-c1d303526e00",
+        "tinyui": "/x/TYAB",
+        "self": "http://localhost:8090/rest/api/content/98381"
+      },
+      "_expandable": {
+        "container": "/rest/api/space/TEST",
+        "metadata": "",
+        "operations": "",
+        "children": "/rest/api/content/98381/child",
+        "restrictions": "/rest/api/content/98381/restriction/byOperation",
+        "history": "/rest/api/content/98381/history",
+        "ancestors": "",
+        "body": "",
+        "version": "",
+        "descendants": "/rest/api/content/98381/descendant",
+        "space": "/rest/api/space/TEST"
+      }
+    }
+  ],
+  "start": 0,
+  "limit": 25,
+  "size": 2,
+  "_links": {
+    "self": "http://localhost:8090/rest/api/content/98362/child/page",
+    "base": "http://localhost:8090",
+    "context": ""
+  }
+}

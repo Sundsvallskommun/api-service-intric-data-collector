@@ -1,0 +1,42 @@
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    url: jdbc:tc:mariadb:10.6.12:///?user=root&password=
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+# Integrations
+integration:
+  # Intric
+  intric:
+    base-url: http://localhost:${wiremock.server.port}/intric
+    oauth2:
+      token-url: http://localhost:${wiremock.server.port}/intric/token
+      username: someUsername
+      password: somePassword
+    connect-timeout-in-seconds: 123
+    read-timeout-in-seconds: 456
+
+  # Confluence
+  confluence:
+    environments:
+      1984:
+        base-url: http://localhost:${wiremock.server.port}/confluence
+        basic-auth:
+          username: someUsername
+          password: somePassword
+        scheduling:
+          enabled: true
+          cron-expression: '0 0 0/2 * * *'
+        webhook:
+          enabled: true
+          security:
+            enabled: true
+            secret: SUPER_DUPER_S3CR3T!
+        mappings:
+          - root-id: 98362
+            intric-group-id: 97332ac9-b05e-46ac-abb5-2e2563e86d87
+        blacklisted-root-ids:
+          - 1212426
+        connect-timeout-in-seconds: 10
+        read-timeout-in-seconds: 30

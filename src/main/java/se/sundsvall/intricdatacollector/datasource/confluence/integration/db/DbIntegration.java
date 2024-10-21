@@ -1,5 +1,6 @@
 package se.sundsvall.intricdatacollector.datasource.confluence.integration.db;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -19,6 +20,12 @@ public class DbIntegration {
 
     public Optional<String> getBlobId(final String pageId, final String municipalityId) {
         return pageRepository.findBlobIdByPageIdAndMunicipalityId(pageId, municipalityId);
+    }
+
+    public List<Page> getAllPages(final String municipalityId) {
+        return pageRepository.findPageEntitiesByMunicipalityId(municipalityId).stream()
+            .map(pageMapper::toPage)
+            .toList();
     }
 
     public Optional<Page> getPage(final String pageId, final String municipalityId) {
