@@ -9,9 +9,9 @@ spring:
 integration:
   # Intric
   intric:
-    base-url: someBaseUrl
+    base-url: http://localhost:${wiremock.server.port}/intric
     oauth2:
-      token-url: someTokenUrl
+      token-url: http://localhost:${wiremock.server.port}/intric/token
       username: someUsername
       password: somePassword
     connect-timeout-in-seconds: 123
@@ -21,7 +21,7 @@ integration:
   confluence:
     environments:
       1984:
-        base-url: someBaseUrl
+        base-url: http://localhost:${wiremock.server.port}/confluence
         basic-auth:
           username: someUsername
           password: somePassword
@@ -34,9 +34,11 @@ integration:
             enabled: true
             secret: SUPER_DUPER_S3CR3T!
         mappings:
-          - root-id: 4567110901
+          - root-id: 98362
             intric-group-id: 97332ac9-b05e-46ac-abb5-2e2563e86d87
+          - root-id: 1203442627
+            intric-group-id: bb5aaf12-8b16-455c-9e78-bc6b6e2be063
         blacklisted-root-ids:
-          - 4567890
-        connect-timeout-in-seconds: 123
-        read-timeout-in-seconds: 456
+          - 1212426
+        connect-timeout-in-seconds: 10
+        read-timeout-in-seconds: 30

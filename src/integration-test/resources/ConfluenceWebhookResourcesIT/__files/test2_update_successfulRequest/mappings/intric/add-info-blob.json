@@ -1,0 +1,33 @@
+{
+  "name": "intric-add-info-blob",
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/intric/groups/([0-9a-fA-F-]{36})/info-blobs/"
+  },
+  "response": {
+    "transformers": [ "response-template" ],
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "items": [
+        {
+          "created_at": "{{ now }}",
+          "updated_at": "{{ now }}",
+          "id": "{{ randomValue type='UUID' }}",
+          "metadata": {
+            "url": "{{ jsonPath request.body '$.info_blobs[0].metadata.url' }}",
+            "title": "{{ jsonPath request.body '$.info_blobs[0].metadata.title' }}",
+            "embedding_model_id": "{{ randomValue type='UUID' }}",
+            "size": "{{ randomInt lower=8 upper=1000 }}"
+          },
+          "group_id": "bb5aaf12-8b16-455c-9e78-bc6b6e2be063",
+          "website_id": "{{ randomValue type='UUID' }}",
+          "text": "{{ jsonPath request.body '$.info_blobs[0].text' }}"
+        }
+      ],
+      "count": 1
+    }
+  }
+}

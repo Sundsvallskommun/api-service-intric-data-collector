@@ -1,0 +1,13 @@
+{
+  "request": {
+    "url": "/confluence/content/1203442627?expand=body.storage%2Cancestors%2Cversion",
+    "method": "GET"
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "bodyFileName": "test1_insert_successfulRequest/responses/confluence/1203442627.content.json"
+  }
+}

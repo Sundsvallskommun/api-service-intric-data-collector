@@ -1,5 +1,6 @@
 package se.sundsvall.intricdatacollector.datasource.confluence.integration.db;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +16,8 @@ interface PageRepository extends JpaRepository<PageEntity, String> {
 
     @Query(value = "SELECT p.blob_id FROM confluence_pages AS p WHERE p.page_id = :pageId AND p.municipality_id = :municipalityId", nativeQuery = true)
     Optional<String> findBlobIdByPageIdAndMunicipalityId(@Param("pageId") String pageId, @Param("municipalityId") String municipalityId);
+
+    List<PageEntity> findPageEntitiesByMunicipalityId(String municipalityId);
 
     Optional<PageEntity> findPageEntityByPageIdAndMunicipalityId(String pageId, String municipalityId);
 
