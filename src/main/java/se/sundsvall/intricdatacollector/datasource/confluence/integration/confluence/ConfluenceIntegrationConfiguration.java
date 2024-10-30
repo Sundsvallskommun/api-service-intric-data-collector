@@ -25,35 +25,35 @@ import feign.auth.BasicAuthRequestInterceptor;
 @EnableConfigurationProperties(ConfluenceIntegrationProperties.class)
 class ConfluenceIntegrationConfiguration {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ConfluenceIntegrationConfiguration.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ConfluenceIntegrationConfiguration.class);
 
-    static final String CLIENT_ID = "confluence";
+	static final String CLIENT_ID = "confluence";
 
-    @Bean
-    static BeanDefinitionRegistryPostProcessor confluenceClientBeanDefinitionRegistryPostProcessor(final ApplicationContext applicationContext) {
-        var binder = Binder.get(applicationContext.getEnvironment());
-        var properties = binder.bind("integration.confluence", ConfluenceIntegrationProperties.class).get();
+	@Bean
+	static BeanDefinitionRegistryPostProcessor confluenceClientBeanDefinitionRegistryPostProcessor(final ApplicationContext applicationContext) {
+		var binder = Binder.get(applicationContext.getEnvironment());
+		var properties = binder.bind("integration.confluence", ConfluenceIntegrationProperties.class).get();
 
-        return registry -> properties.environments().forEach((municipalityId, environment) -> {
-            var beanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
-            var clientName = "%s-%s".formatted(CLIENT_ID, municipalityId);
+		return registry -> properties.environments().forEach((municipalityId, environment) -> {
+			var beanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
+			var clientName = "%s-%s".formatted(CLIENT_ID, municipalityId);
 
-            var beanDefinition = new GenericBeanDefinition();
-            beanDefinition.setBeanClass(ConfluenceClient.class);
-            beanDefinition.setInstanceSupplier(() -> new FeignClientBuilder(applicationContext)
-                .forType(ConfluenceClient.class, "%s-%s".formatted(CLIENT_ID, municipalityId))
-                .url(environment.baseUrl())
-                .customize(builder -> builder
-                    .dismiss404()
-                    .errorDecoder(new ProblemErrorDecoder(clientName))
-                    .requestInterceptor(new BasicAuthRequestInterceptor(environment.basicAuth().username(), environment.basicAuth().password()))
-                    .options(new Request.Options(environment.connectTimeoutInSeconds(), SECONDS, environment.readTimeoutInSeconds(), SECONDS, true))
-                    .build())
-                .build());
+			var beanDefinition = new GenericBeanDefinition();
+			beanDefinition.setBeanClass(ConfluenceClient.class);
+			beanDefinition.setInstanceSupplier(() -> new FeignClientBuilder(applicationContext)
+				.forType(ConfluenceClient.class, "%s-%s".formatted(CLIENT_ID, municipalityId))
+				.url(environment.baseUrl())
+				.customize(builder -> builder
+					.dismiss404()
+					.errorDecoder(new ProblemErrorDecoder(clientName))
+					.requestInterceptor(new BasicAuthRequestInterceptor(environment.basicAuth().username(), environment.basicAuth().password()))
+					.options(new Request.Options(environment.connectTimeoutInSeconds(), SECONDS, environment.readTimeoutInSeconds(), SECONDS, true))
+					.build())
+				.build());
 
-            registry.registerBeanDefinition(beanName, beanDefinition);
+			registry.registerBeanDefinition(beanName, beanDefinition);
 
-            LOG.info("Registered Confluence client {} (municipalityId: {})", beanName, municipalityId);
-        });
-    }
+			LOG.info("Registered Confluence client {} (municipalityId: {})", beanName, municipalityId);
+		});
+	}
 }

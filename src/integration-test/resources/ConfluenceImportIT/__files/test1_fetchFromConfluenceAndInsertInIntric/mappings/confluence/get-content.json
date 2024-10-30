@@ -1,14 +1,12 @@
 {
-  "request": {
-    "urlPattern": "/confluence/content/([0-9]*)\\?expand=body.storage%2Cancestors%2Cversion",
-    "method": "GET"
-  },
-  "response": {
-    "transformers": [ "response-template" ],
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "status": 200,
-    "bodyFileName": "test1_fetchFromConfluenceAndInsertInIntric/responses/confluence/{{ request.path.[2] }}.content.json"
-  }
+	"request": {
+		"method": "GET",
+		"urlPattern": "/confluence/content/([0-9]*)\\?expand=body.storage%2Cancestors%2Cversion"
+	},
+	"response": {
+		"headers": {"Content-Type": "application/json"},
+		"transformers": ["response-template"],
+		"bodyFileName": "test1_fetchFromConfluenceAndInsertInIntric/responses/confluence/{{ request.path.[2] }}.content.json",
+		"status": 200
+	}
 }

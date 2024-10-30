@@ -12,25 +12,17 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "integration.intric")
 record IntricIntegrationProperties(
 
-        @NotBlank
-        String baseUrl,
+	@NotBlank String baseUrl,
 
-        @Valid
-        @NotNull
-        Oauth2 oauth2,
+	@Valid @NotNull Oauth2 oauth2,
 
-        @DefaultValue("120")
-        int connectTimeoutInSeconds,
+	@DefaultValue("120") int connectTimeoutInSeconds,
 
-        @DefaultValue("120")
-        int readTimeoutInSeconds) {
+	@DefaultValue("120") int readTimeoutInSeconds) {
 
-    record Oauth2(
+	record Oauth2(
 
-        @NotBlank
-        String tokenUrl,
-        @NotBlank
-        String username,
-        @NotBlank
-        String password) { }
+		@NotBlank String tokenUrl,
+		@NotBlank String username,
+		@NotBlank String password) {}
 }

@@ -16,12 +16,12 @@ import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
 @EnableSchedulerLock(defaultLockAtMostFor = "PT2M")
 class SchedulingConfiguration {
 
-    @Bean
-    LockProvider lockProvider(final DataSource dataSource) {
-        return new JdbcTemplateLockProvider(
-            JdbcTemplateLockProvider.Configuration.builder()
-                .usingDbTime()
-                .withJdbcTemplate(new JdbcTemplate(dataSource))
-                .build());
-    }
+	@Bean
+	LockProvider lockProvider(final DataSource dataSource) {
+		return new JdbcTemplateLockProvider(
+			JdbcTemplateLockProvider.Configuration.builder()
+				.usingDbTime()
+				.withJdbcTemplate(new JdbcTemplate(dataSource))
+				.build());
+	}
 }

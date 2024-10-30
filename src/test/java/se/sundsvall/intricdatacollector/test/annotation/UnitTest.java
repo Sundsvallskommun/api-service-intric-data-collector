@@ -15,5 +15,5 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles(UnitTest.PROFILE_NAME)
 public @interface UnitTest {
 
-    String PROFILE_NAME = "junit";
+	String PROFILE_NAME = "junit";
 }

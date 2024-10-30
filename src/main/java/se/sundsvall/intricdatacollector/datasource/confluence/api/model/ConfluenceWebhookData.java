@@ -10,24 +10,23 @@ import org.jilt.Builder;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Builder(setterPrefix = "with", factoryMethod = "create")
-@JsonPropertyOrder({"timestamp", "event", "userKey", "page", "updateTrigger"})
+@JsonPropertyOrder({
+	"timestamp", "event", "userKey", "page", "updateTrigger"
+})
 public record ConfluenceWebhookData(
 
-        @NotNull
-        @JsonProperty("event")
-        @Schema(description = "Event type", allowableValues = {"page_created", "page_updated", "page_removed", "page_restored"})
-        String eventType,
+	@NotNull @JsonProperty("event") @Schema(description = "Event type", allowableValues = {
+		"page_created", "page_updated", "page_removed", "page_restored"
+	}) String eventType,
 
-        @Valid
-        @NotNull
-        Page page,
+	@Valid @NotNull Page page,
 
-        String userKey,
+	String userKey,
 
-        Long timestamp,
+	Long timestamp,
 
-        String updateTrigger) {
+	String updateTrigger){
 
-    @Builder(setterPrefix = "with", factoryMethod = "create")
-    public record Page(@NotNull Long id) { }
+	@Builder(setterPrefix = "with", factoryMethod = "create")
+	public record Page(@NotNull Long id) {}
 }

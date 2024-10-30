@@ -17,5 +17,5 @@ import org.springframework.transaction.annotation.Transactional;
 @ActiveProfiles(IntegrationTest.PROFILE_NAME)
 public @interface IntegrationTest {
 
-    String PROFILE_NAME = "it";
+	String PROFILE_NAME = "it";
 }

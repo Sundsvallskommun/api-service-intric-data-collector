@@ -12,34 +12,34 @@ import se.sundsvall.intricdatacollector.datasource.confluence.model.PageBuilder;
 @Component
 class ConfluencePageMapper {
 
-    private final PageJsonParser pageJsonParser;
+	private final PageJsonParser pageJsonParser;
 
-    ConfluencePageMapper(final PageJsonParser pageJsonParser) {
-        this.pageJsonParser = pageJsonParser;
-    }
+	ConfluencePageMapper(final PageJsonParser pageJsonParser) {
+		this.pageJsonParser = pageJsonParser;
+	}
 
-    Page newPage(final String municipalityId, final String pageId) {
-        return PageBuilder.create()
-            .withPageId(pageId)
-            .withMunicipalityId(municipalityId)
-            .build();
-    }
+	Page newPage(final String municipalityId, final String pageId) {
+		return PageBuilder.create()
+			.withPageId(pageId)
+			.withMunicipalityId(municipalityId)
+			.build();
+	}
 
-    Page toPage(final String municipalityId, final String pageId, final String json) {
-        var pageJson = pageJsonParser.parse(json);
+	Page toPage(final String municipalityId, final String pageId, final String json) {
+		var pageJson = pageJsonParser.parse(json);
 
-        return PageBuilder.create()
-            .withMunicipalityId(municipalityId)
-            .withPageId(pageId)
-            .withTitle(pageJson.getTitle())
-            .withBody(pageJson.getBody())
-            .withBaseUrl(pageJson.getBaseUrl())
-            .withPath(pageJson.getPath())
-            .withUpdatedAt(ofNullable(pageJson.getUpdatedAt())
-                .map(OffsetDateTime::parse)
-                .map(OffsetDateTime::toLocalDateTime)
-                .orElse(null))
-            .withAncestorIds(pageJson.getAncestorIds())
-            .build();
-    }
+		return PageBuilder.create()
+			.withMunicipalityId(municipalityId)
+			.withPageId(pageId)
+			.withTitle(pageJson.getTitle())
+			.withBody(pageJson.getBody())
+			.withBaseUrl(pageJson.getBaseUrl())
+			.withPath(pageJson.getPath())
+			.withUpdatedAt(ofNullable(pageJson.getUpdatedAt())
+				.map(OffsetDateTime::parse)
+				.map(OffsetDateTime::toLocalDateTime)
+				.orElse(null))
+			.withAncestorIds(pageJson.getAncestorIds())
+			.build();
+	}
 }

@@ -1,8 +1,8 @@
 {
-  "type": "about:blank",
-  "title": "Forbidden",
-  "status": 403,
-  "detail": "Webhook signature verification failed",
-  "instance": null,
-  "properties": null
+	"instance": null,
+	"detail": "Webhook signature verification failed",
+	"type": "about:blank",
+	"title": "Forbidden",
+	"properties": null,
+	"status": 403
 }

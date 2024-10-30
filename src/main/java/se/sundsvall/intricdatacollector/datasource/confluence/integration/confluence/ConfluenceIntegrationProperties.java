@@ -17,61 +17,47 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "integration.confluence")
 public record ConfluenceIntegrationProperties(Map<String, Environment> environments) {
 
-    public record Environment(
+	public record Environment(
 
-        @NotBlank
-        String baseUrl,
+		@NotBlank String baseUrl,
 
-        @Valid
-        @NotNull
-        BasicAuthentication basicAuth,
+		@Valid @NotNull BasicAuthentication basicAuth,
 
-        Scheduling scheduling,
+		Scheduling scheduling,
 
-        Webhook webhook,
+		Webhook webhook,
 
-        @DefaultValue
-        List<@NotBlank String> blacklistedRootIds,
+		@DefaultValue List<@NotBlank String> blacklistedRootIds,
 
-        @NotEmpty
-        List<@Valid Mapping> mappings,
+		@NotEmpty List<@Valid Mapping> mappings,
 
-        @DefaultValue("5")
-        int connectTimeoutInSeconds,
+		@DefaultValue("5") int connectTimeoutInSeconds,
 
-        @DefaultValue("20")
-        int readTimeoutInSeconds) {
+		@DefaultValue("20") int readTimeoutInSeconds) {
 
-        public record Mapping(
-            @NotBlank
-            String intricGroupId,
+		public record Mapping(
+			@NotBlank String intricGroupId,
 
-            @NotBlank
-            String rootId) { }
+			@NotBlank String rootId) {}
 
-        public record Scheduling(
+		public record Scheduling(
 
-            @DefaultValue("true")
-            boolean enabled,
+			@DefaultValue("true") boolean enabled,
 
-            @NotBlank
-            String cronExpression,
+			@NotBlank String cronExpression,
 
-            @DefaultValue("PT2M")
-            Duration lockAtMostFor) { }
+			@DefaultValue("PT2M") Duration lockAtMostFor) {}
 
-        public record Webhook(boolean enabled, WebhookSecurity security) {
+		public record Webhook(boolean enabled, WebhookSecurity security) {
 
-            public record WebhookSecurity(String secret, boolean enabled) { }
-        }
+			public record WebhookSecurity(String secret, boolean enabled) {}
+		}
 
-        public record BasicAuthentication(
+		public record BasicAuthentication(
 
-            @NotBlank
-            String username,
+			@NotBlank String username,
 
-            @NotBlank
-            String password) {
-        }
-    }
+			@NotBlank String password) {
+		}
+	}
 }

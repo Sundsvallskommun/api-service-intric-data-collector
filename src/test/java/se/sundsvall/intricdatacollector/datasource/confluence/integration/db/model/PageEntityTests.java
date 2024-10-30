@@ -18,62 +18,62 @@ import org.junit.jupiter.api.Test;
 
 class PageEntityTests {
 
-    @BeforeAll
-    static void setup() {
-        registerValueGenerator(() -> now().plusDays(new Random().nextInt()), LocalDateTime.class);
-    }
+	@BeforeAll
+	static void setup() {
+		registerValueGenerator(() -> now().plusDays(new Random().nextInt()), LocalDateTime.class);
+	}
 
-    @Test
-    void classProperties() {
-        MatcherAssert.assertThat(PageEntity.class, allOf(
-            hasValidBeanConstructor(),
-            hasValidGettersAndSetters(),
-            hasValidBeanHashCode(),
-            hasValidBeanEquals()));
-    }
+	@Test
+	void classProperties() {
+		MatcherAssert.assertThat(PageEntity.class, allOf(
+			hasValidBeanConstructor(),
+			hasValidGettersAndSetters(),
+			hasValidBeanHashCode(),
+			hasValidBeanEquals()));
+	}
 
-    @Test
-    void gettersAndSetters() {
-        var pageId = "somePageId";
-        var municipalityId = "someMunicipalityId";
-        var intricGroupId = "someIntricGroupId";
-        var intricBlobId = "someIntricBlobId";
+	@Test
+	void gettersAndSetters() {
+		var pageId = "somePageId";
+		var municipalityId = "someMunicipalityId";
+		var intricGroupId = "someIntricGroupId";
+		var intricBlobId = "someIntricBlobId";
 
-        var pageEntity = new PageEntity();
-        pageEntity.setPageId(pageId);
-        pageEntity.setMunicipalityId(municipalityId);
-        pageEntity.setIntricGroupId(intricGroupId);
-        pageEntity.setIntricBlobId(intricBlobId);
+		var pageEntity = new PageEntity();
+		pageEntity.setPageId(pageId);
+		pageEntity.setMunicipalityId(municipalityId);
+		pageEntity.setIntricGroupId(intricGroupId);
+		pageEntity.setIntricBlobId(intricBlobId);
 
-        assertThat(pageEntity.getPageId()).isEqualTo(pageId);
-        assertThat(pageEntity.getMunicipalityId()).isEqualTo(municipalityId);
-        assertThat(pageEntity.getIntricGroupId()).isEqualTo(intricGroupId);
-        assertThat(pageEntity.getIntricBlobId()).isEqualTo(intricBlobId);
-    }
+		assertThat(pageEntity.getPageId()).isEqualTo(pageId);
+		assertThat(pageEntity.getMunicipalityId()).isEqualTo(municipalityId);
+		assertThat(pageEntity.getIntricGroupId()).isEqualTo(intricGroupId);
+		assertThat(pageEntity.getIntricBlobId()).isEqualTo(intricBlobId);
+	}
 
-    @Test
-    void builder() {
-        var pageId = "somePageId";
-        var municipalityId = "someMunicipalityId";
-        var intricGroupId = "someIntricGroupId";
-        var intricBlobId = "someIntricBlobId";
+	@Test
+	void builder() {
+		var pageId = "somePageId";
+		var municipalityId = "someMunicipalityId";
+		var intricGroupId = "someIntricGroupId";
+		var intricBlobId = "someIntricBlobId";
 
-        var pageEntity = PageEntityBuilder.create()
-            .withPageId(pageId)
-            .withMunicipalityId(municipalityId)
-            .withIntricGroupId(intricGroupId)
-            .withIntricBlobId(intricBlobId)
-            .build();
+		var pageEntity = PageEntityBuilder.create()
+			.withPageId(pageId)
+			.withMunicipalityId(municipalityId)
+			.withIntricGroupId(intricGroupId)
+			.withIntricBlobId(intricBlobId)
+			.build();
 
-        assertThat(pageEntity.getPageId()).isEqualTo(pageId);
-        assertThat(pageEntity.getMunicipalityId()).isEqualTo(municipalityId);
-        assertThat(pageEntity.getIntricGroupId()).isEqualTo(intricGroupId);
-        assertThat(pageEntity.getIntricBlobId()).isEqualTo(intricBlobId);
-    }
+		assertThat(pageEntity.getPageId()).isEqualTo(pageId);
+		assertThat(pageEntity.getMunicipalityId()).isEqualTo(municipalityId);
+		assertThat(pageEntity.getIntricGroupId()).isEqualTo(intricGroupId);
+		assertThat(pageEntity.getIntricBlobId()).isEqualTo(intricBlobId);
+	}
 
-    @Test
-    void noDirtOnCreatedBean() {
-        assertThat(new PageEntity()).hasAllNullFieldsOrProperties();
-        assertThat(PageEntityBuilder.create().build()).hasAllNullFieldsOrProperties();
-    }
+	@Test
+	void noDirtOnCreatedBean() {
+		assertThat(new PageEntity()).hasAllNullFieldsOrProperties();
+		assertThat(PageEntityBuilder.create().build()).hasAllNullFieldsOrProperties();
+	}
 }

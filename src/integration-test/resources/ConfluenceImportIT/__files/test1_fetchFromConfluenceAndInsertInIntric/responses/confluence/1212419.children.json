@@ -1,40 +1,36 @@
 {
-  "results": [
-    {
-      "id": "1212424",
-      "type": "page",
-      "status": "current",
-      "title": "A subsubpage",
-      "extensions": {
-        "position": "none"
-      },
-      "_links": {
-        "webui": "/display/TEST/A+subsubpage",
-        "edit": "/pages/resumedraft.action?draftId=1212424&draftShareId=730ab5f1-deab-4886-931e-c19afb08708c",
-        "tinyui": "/x/CIAS",
-        "self": "http://localhost:8090/rest/api/content/1212424"
-      },
-      "_expandable": {
-        "container": "/rest/api/space/TEST",
-        "metadata": "",
-        "operations": "",
-        "children": "/rest/api/content/1212424/child",
-        "restrictions": "/rest/api/content/1212424/restriction/byOperation",
-        "history": "/rest/api/content/1212424/history",
-        "ancestors": "",
-        "body": "",
-        "version": "",
-        "descendants": "/rest/api/content/1212424/descendant",
-        "space": "/rest/api/space/TEST"
-      }
-    }
-  ],
-  "start": 0,
-  "limit": 25,
-  "size": 1,
-  "_links": {
-    "self": "http://localhost:8090/rest/api/content/1212419/child/page",
-    "base": "http://localhost:8090",
-    "context": ""
-  }
+	"size": 1,
+	"_links": {
+		"context": "",
+		"self": "http://localhost:8090/rest/api/content/1212419/child/page",
+		"base": "http://localhost:8090"
+	},
+	"start": 0,
+	"limit": 25,
+	"results": [{
+		"extensions": {"position": "none"},
+		"_links": {
+			"webui": "/display/TEST/A+subsubpage",
+			"edit": "/pages/resumedraft.action?draftId=1212424&draftShareId=730ab5f1-deab-4886-931e-c19afb08708c",
+			"tinyui": "/x/CIAS",
+			"self": "http://localhost:8090/rest/api/content/1212424"
+		},
+		"id": "1212424",
+		"type": "page",
+		"title": "A subsubpage",
+		"_expandable": {
+			"container": "/rest/api/space/TEST",
+			"metadata": "",
+			"operations": "",
+			"children": "/rest/api/content/1212424/child",
+			"restrictions": "/rest/api/content/1212424/restriction/byOperation",
+			"history": "/rest/api/content/1212424/history",
+			"ancestors": "",
+			"body": "",
+			"version": "",
+			"descendants": "/rest/api/content/1212424/descendant",
+			"space": "/rest/api/space/TEST"
+		},
+		"status": "current"
+	}]
 }

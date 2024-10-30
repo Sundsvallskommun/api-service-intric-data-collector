@@ -16,52 +16,50 @@ import org.zalando.problem.Problem;
 
 class IntricTokenService {
 
-    private final MultiValueMap<String, String> accessTokenRequestData;
-    private final RestClient restClient;
+	private final MultiValueMap<String, String> accessTokenRequestData;
+	private final RestClient restClient;
 
-    private Instant tokenExpiration;
-    private String token;
+	private Instant tokenExpiration;
+	private String token;
 
-    IntricTokenService(final RestClient restClient, final String username, final String password) {
-        this.restClient = restClient;
+	IntricTokenService(final RestClient restClient, final String username, final String password) {
+		this.restClient = restClient;
 
-        accessTokenRequestData = new LinkedMultiValueMap<>();
-        accessTokenRequestData.add("grant_type", "password");
-        accessTokenRequestData.add("username", username);
-        accessTokenRequestData.add("password", password);
-        accessTokenRequestData.add("scope", "");
-        accessTokenRequestData.add("client_id", "");
-        accessTokenRequestData.add("client_secret", "");
-    }
+		accessTokenRequestData = new LinkedMultiValueMap<>();
+		accessTokenRequestData.add("grant_type", "password");
+		accessTokenRequestData.add("username", username);
+		accessTokenRequestData.add("password", password);
+		accessTokenRequestData.add("scope", "");
+		accessTokenRequestData.add("client_id", "");
+		accessTokenRequestData.add("client_secret", "");
+	}
 
-    String getToken() {
-        // If we don't have a token at all, or if it's expired - get a new one
-        if (token == null || (tokenExpiration != null && tokenExpiration.isBefore(now()))) {
-            var tokenResponse = retrieveToken();
+	String getToken() {
+		// If we don't have a token at all, or if it's expired - get a new one
+		if (token == null || (tokenExpiration != null && tokenExpiration.isBefore(now()))) {
+			var tokenResponse = retrieveToken();
 
-            token = ofNullable(tokenResponse.getBody())
-                .map(AccessTokenResponse::accessToken)
-                .orElseThrow(() -> Problem.valueOf(INTERNAL_SERVER_ERROR, "Unable to extract access token"));
+			token = ofNullable(tokenResponse.getBody())
+				.map(AccessTokenResponse::accessToken)
+				.orElseThrow(() -> Problem.valueOf(INTERNAL_SERVER_ERROR, "Unable to extract access token"));
 
-            // Decode the token to extract the expiresAt instant
-            var jwt = JWT.decode(token);
-            tokenExpiration = jwt.getExpiresAtAsInstant();
-        }
+			// Decode the token to extract the expiresAt instant
+			var jwt = JWT.decode(token);
+			tokenExpiration = jwt.getExpiresAtAsInstant();
+		}
 
-        return token;
-    }
+		return token;
+	}
 
-    ResponseEntity<AccessTokenResponse> retrieveToken() {
-        return restClient.post()
-            .body(accessTokenRequestData)
-            .retrieve()
-            .toEntity(AccessTokenResponse.class);
-    }
+	ResponseEntity<AccessTokenResponse> retrieveToken() {
+		return restClient.post()
+			.body(accessTokenRequestData)
+			.retrieve()
+			.toEntity(AccessTokenResponse.class);
+	}
 
-    record AccessTokenResponse(
+	record AccessTokenResponse(
 
-        @JsonProperty("access_token")
-        String accessToken,
-        @JsonProperty("token_type")
-        String tokenType) { }
+		@JsonProperty("access_token") String accessToken,
+		@JsonProperty("token_type") String tokenType) {}
 }

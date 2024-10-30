@@ -1,33 +1,29 @@
 {
-  "name": "intric-add-info-blob",
-  "request": {
-    "urlPathPattern": "/intric/groups/([0-9a-fA-F-]{36})/info-blobs/",
-    "method": "POST"
-  },
-  "response": {
-    "transformers": [ "response-template" ],
-    "status": 200,
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "jsonBody": {
-      "items": [
-        {
-          "created_at": "{{ now }}",
-          "updated_at": "{{ now }}",
-          "id": "{{ randomValue type='UUID' }}",
-          "metadata": {
-            "url": "{{ jsonPath request.body '$.info_blobs[0].metadata.url' }}",
-            "title": "{{ jsonPath request.body '$.info_blobs[0].metadata.title' }}",
-            "embedding_model_id": "{{ randomValue type='UUID' }}",
-            "size": "{{ randomInt lower=8 upper=1000 }}"
-          },
-          "group_id": "{{ request.pathSegments.[2] }}",
-          "website_id": "{{ randomValue type='UUID' }}",
-          "text": "{{ jsonPath request.body '$.info_blobs[0].text' }}"
-        }
-      ],
-      "count": 1
-    }
-  }
+	"request": {
+		"method": "POST",
+		"urlPathPattern": "/intric/groups/([0-9a-fA-F-]{36})/info-blobs/"
+	},
+	"response": {
+		"headers": {"Content-Type": "application/json"},
+		"transformers": ["response-template"],
+		"jsonBody": {
+			"count": 1,
+			"items": [{
+				"metadata": {
+					"embedding_model_id": "{{ randomValue type='UUID' }}",
+					"size": "{{ randomInt lower=8 upper=1000 }}",
+					"title": "{{ jsonPath request.body '$.info_blobs[0].metadata.title' }}",
+					"url": "{{ jsonPath request.body '$.info_blobs[0].metadata.url' }}"
+				},
+				"updated_at": "{{ now }}",
+				"group_id": "{{ request.pathSegments.[2] }}",
+				"created_at": "{{ now }}",
+				"id": "{{ randomValue type='UUID' }}",
+				"text": "{{ jsonPath request.body '$.info_blobs[0].text' }}",
+				"website_id": "{{ randomValue type='UUID' }}"
+			}]
+		},
+		"status": 200
+	},
+	"name": "intric-add-info-blob"
 }
