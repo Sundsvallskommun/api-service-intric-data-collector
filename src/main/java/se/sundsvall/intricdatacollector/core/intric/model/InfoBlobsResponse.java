@@ -1,40 +1,34 @@
 package se.sundsvall.intricdatacollector.core.intric.model;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 public record InfoBlobsResponse(List<Item> items, int count) {
 
-    public record Item(
+	public record Item(
 
-            String id,
+		String id,
 
-            String text,
+		String text,
 
-            Metadata metadata,
+		Metadata metadata,
 
-            @JsonProperty("created_at")
-            String createdAt,
+		@JsonProperty("created_at") String createdAt,
 
-            @JsonProperty("updated_at")
-            String updatedAt,
+		@JsonProperty("updated_at") String updatedAt,
 
-            @JsonProperty("group_id")
-            String groupId,
+		@JsonProperty("group_id") String groupId,
 
-            @JsonProperty("website_id")
-            String websiteId) {
+		@JsonProperty("website_id") String websiteId) {
 
-        public record Metadata(
+		public record Metadata(
 
-            @JsonProperty("embedding_model_id")
-            String embeddingModelId,
+			@JsonProperty("embedding_model_id") String embeddingModelId,
 
-            String title,
+			String title,
 
-            String url,
+			String url,
 
-            int size) { }
-    }
+			int size) {}
+	}
 }
