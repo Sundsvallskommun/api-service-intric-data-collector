@@ -12,9 +12,8 @@ import static se.sundsvall.intricdatacollector.datasource.confluence.PageJsonPar
 import static se.sundsvall.intricdatacollector.datasource.confluence.PageJsonParser.TITLE;
 import static se.sundsvall.intricdatacollector.datasource.confluence.PageJsonParser.UPDATED_AT;
 
-import java.util.List;
-
 import com.jayway.jsonpath.DocumentContext;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,97 +24,97 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class PageJsonParserTests {
 
-    @Nested
-    class PageJsonTests {
+	@Nested
+	class PageJsonTests {
 
-        @Mock
-        private DocumentContext documentContextMock;
+		@Mock
+		private DocumentContext documentContextMock;
 
-        @InjectMocks
-        private PageJsonParser.PageJson pageJson;
+		@InjectMocks
+		private PageJsonParser.PageJson pageJson;
 
-        @Test
-        void getTitle() {
-            var title = "someTitle";
+		@Test
+		void getTitle() {
+			var title = "someTitle";
 
-            when(documentContextMock.read(TITLE)).thenReturn(title);
+			when(documentContextMock.read(TITLE)).thenReturn(title);
 
-            assertThat(pageJson.getTitle()).isEqualTo(title);
+			assertThat(pageJson.getTitle()).isEqualTo(title);
 
-            verify(documentContextMock).read(TITLE);
-            verifyNoMoreInteractions(documentContextMock);
-        }
+			verify(documentContextMock).read(TITLE);
+			verifyNoMoreInteractions(documentContextMock);
+		}
 
-        @Test
-        void getBody() {
-            var body = "someBody";
+		@Test
+		void getBody() {
+			var body = "someBody";
 
-            when(documentContextMock.read(BODY)).thenReturn(body);
+			when(documentContextMock.read(BODY)).thenReturn(body);
 
-            assertThat(pageJson.getBody()).isEqualTo(body);
+			assertThat(pageJson.getBody()).isEqualTo(body);
 
-            verify(documentContextMock).read(BODY);
-            verifyNoMoreInteractions(documentContextMock);
-        }
+			verify(documentContextMock).read(BODY);
+			verifyNoMoreInteractions(documentContextMock);
+		}
 
-        @Test
-        void getBaseUrl() {
-            var baseUrl = "someBaseUrl";
+		@Test
+		void getBaseUrl() {
+			var baseUrl = "someBaseUrl";
 
-            when(documentContextMock.read(BASE_URL)).thenReturn(baseUrl);
+			when(documentContextMock.read(BASE_URL)).thenReturn(baseUrl);
 
-            assertThat(pageJson.getBaseUrl()).isEqualTo(baseUrl);
+			assertThat(pageJson.getBaseUrl()).isEqualTo(baseUrl);
 
-            verify(documentContextMock).read(BASE_URL);
-            verifyNoMoreInteractions(documentContextMock);
-        }
+			verify(documentContextMock).read(BASE_URL);
+			verifyNoMoreInteractions(documentContextMock);
+		}
 
-        @Test
-        void getPath() {
-            var path = "somePath";
+		@Test
+		void getPath() {
+			var path = "somePath";
 
-            when(documentContextMock.read(PATH)).thenReturn(path);
+			when(documentContextMock.read(PATH)).thenReturn(path);
 
-            assertThat(pageJson.getPath()).isEqualTo(path);
+			assertThat(pageJson.getPath()).isEqualTo(path);
 
-            verify(documentContextMock).read(PATH);
-            verifyNoMoreInteractions(documentContextMock);
-        }
+			verify(documentContextMock).read(PATH);
+			verifyNoMoreInteractions(documentContextMock);
+		}
 
-        @Test
-        void getAncestorIds() {
-            var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
+		@Test
+		void getAncestorIds() {
+			var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
 
-            when(documentContextMock.read(ANCESTOR_IDS)).thenReturn(ancestorIds);
+			when(documentContextMock.read(ANCESTOR_IDS)).thenReturn(ancestorIds);
 
-            assertThat(pageJson.getAncestorIds()).isEqualTo(ancestorIds);
+			assertThat(pageJson.getAncestorIds()).isEqualTo(ancestorIds);
 
-            verify(documentContextMock).read(ANCESTOR_IDS);
-            verifyNoMoreInteractions(documentContextMock);
-        }
+			verify(documentContextMock).read(ANCESTOR_IDS);
+			verifyNoMoreInteractions(documentContextMock);
+		}
 
-        @Test
-        void getChildIds() {
-            var childIds = List.of("someChildId", "someOtherChildId");
+		@Test
+		void getChildIds() {
+			var childIds = List.of("someChildId", "someOtherChildId");
 
-            when(documentContextMock.read(CHILD_IDS)).thenReturn(childIds);
+			when(documentContextMock.read(CHILD_IDS)).thenReturn(childIds);
 
-            assertThat(pageJson.getChildIds()).isEqualTo(childIds);
+			assertThat(pageJson.getChildIds()).isEqualTo(childIds);
 
-            verify(documentContextMock).read(CHILD_IDS);
-            verifyNoMoreInteractions(documentContextMock);
-        }
+			verify(documentContextMock).read(CHILD_IDS);
+			verifyNoMoreInteractions(documentContextMock);
+		}
 
-        @Test
-        void getUpdatedAt() {
-            var updatedAt = "someUpdatedAt";
+		@Test
+		void getUpdatedAt() {
+			var updatedAt = "someUpdatedAt";
 
-            when(documentContextMock.read(UPDATED_AT)).thenReturn(updatedAt);
+			when(documentContextMock.read(UPDATED_AT)).thenReturn(updatedAt);
 
-            assertThat(pageJson.getUpdatedAt()).isEqualTo(updatedAt);
+			assertThat(pageJson.getUpdatedAt()).isEqualTo(updatedAt);
 
-            verify(documentContextMock).read(UPDATED_AT);
-            verifyNoMoreInteractions(documentContextMock);
-        }
-    }
+			verify(documentContextMock).read(UPDATED_AT);
+			verifyNoMoreInteractions(documentContextMock);
+		}
+	}
 }
