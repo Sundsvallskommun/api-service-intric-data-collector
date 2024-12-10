@@ -28,7 +28,7 @@ class IntricIntegrationConfigurationTests {
 	@Mock
 	private IntricTokenService tokenServiceMock;
 
-	@Spy
+	@MockitoSpyBean
 	private FeignMultiCustomizer feignMultiCustomizerSpy;
 	@Mock
 	private FeignBuilderCustomizer feignBuilderCustomizerMock;

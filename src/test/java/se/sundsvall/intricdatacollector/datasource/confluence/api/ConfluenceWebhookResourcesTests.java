@@ -45,7 +45,7 @@ class ConfluenceWebhookResourcesTests {
 
 	private HmacUtils hmacUtils;
 
-	@MockBean
+	@MockitoBean
 	private ConfluenceDataSource dataSourceMock;
 
 	@Autowired

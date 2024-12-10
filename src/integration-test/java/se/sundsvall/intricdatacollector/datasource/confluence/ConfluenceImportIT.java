@@ -21,7 +21,7 @@ class ConfluenceImportIT extends AbstractAppTest {
     @Autowired
     private ConfluenceDataSource confluenceDataSource;
 
-    @SpyBean
+    @MockitoSpyBeanBean
     private IntricIntegration intricIntegrationMock;
 
     @Autowired
