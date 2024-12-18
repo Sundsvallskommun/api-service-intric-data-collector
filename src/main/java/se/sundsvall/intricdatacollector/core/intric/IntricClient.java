@@ -10,30 +10,28 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import se.sundsvall.intricdatacollector.core.intric.model.InfoBlobsRequest;
 import se.sundsvall.intricdatacollector.core.intric.model.InfoBlobsResponse;
 
 @FeignClient(
-    name = INTEGRATION_NAME,
-    configuration = IntricIntegrationConfiguration.class,
-    url = "${integration.intric.base-url}"
-)
+	name = INTEGRATION_NAME,
+	configuration = IntricIntegrationConfiguration.class,
+	url = "${integration.intric.base-url}")
 @CircuitBreaker(name = INTEGRATION_NAME)
 public interface IntricClient {
 
-    @PostMapping(
-        value = "/groups/{groupId}/info-blobs/",
-        produces = APPLICATION_JSON_VALUE,
-        consumes = APPLICATION_JSON_VALUE)
-    InfoBlobsResponse addInfoBlobs(@PathVariable("groupId") String groupId, @RequestBody InfoBlobsRequest infoBlobs);
+	@PostMapping(
+		value = "/groups/{groupId}/info-blobs/",
+		produces = APPLICATION_JSON_VALUE,
+		consumes = APPLICATION_JSON_VALUE)
+	InfoBlobsResponse addInfoBlobs(@PathVariable("groupId") String groupId, @RequestBody InfoBlobsRequest infoBlobs);
 
-    @DeleteMapping(
-        value = "/info-blobs/{blobId}/",
-        produces = APPLICATION_JSON_VALUE,
-        consumes = APPLICATION_JSON_VALUE)
-    InfoBlobsResponse deleteInfoBlob(@PathVariable("blobId") String blobId);
+	@DeleteMapping(
+		value = "/info-blobs/{blobId}/",
+		produces = APPLICATION_JSON_VALUE,
+		consumes = APPLICATION_JSON_VALUE)
+	InfoBlobsResponse deleteInfoBlob(@PathVariable("blobId") String blobId);
 
-    @GetMapping("/users/me/")
-    String getMe();
+	@GetMapping("/users/me/")
+	String getMe();
 }

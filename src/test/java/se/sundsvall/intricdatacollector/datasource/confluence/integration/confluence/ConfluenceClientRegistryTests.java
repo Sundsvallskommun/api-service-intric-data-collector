@@ -9,7 +9,6 @@ import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 import static se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationConfiguration.CLIENT_ID;
 
 import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,60 +20,60 @@ import org.zalando.problem.ThrowableProblem;
 @ExtendWith(MockitoExtension.class)
 class ConfluenceClientRegistryTests {
 
-    @Mock
-    private ApplicationContext applicationContextMock;
+	@Mock
+	private ApplicationContext applicationContextMock;
 
-    @InjectMocks
-    private ConfluenceClientRegistry registry;
+	@InjectMocks
+	private ConfluenceClientRegistry registry;
 
-    @Test
-    void getClient() {
-        var municipalityId = "1984";
-        var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
+	@Test
+	void getClient() {
+		var municipalityId = "1984";
+		var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
 
-        when(applicationContextMock.containsBean(clientBeanName)).thenReturn(true);
-        when(applicationContextMock.getBean(clientBeanName, ConfluenceClient.class)).thenReturn(new DummyClient());
+		when(applicationContextMock.containsBean(clientBeanName)).thenReturn(true);
+		when(applicationContextMock.getBean(clientBeanName, ConfluenceClient.class)).thenReturn(new DummyClient());
 
-        assertThat(registry.getClient(municipalityId)).isNotNull();
+		assertThat(registry.getClient(municipalityId)).isNotNull();
 
-        verify(applicationContextMock).containsBean(clientBeanName);
-        verify(applicationContextMock).getBean(clientBeanName, ConfluenceClient.class);
-        verifyNoMoreInteractions(applicationContextMock);
-    }
+		verify(applicationContextMock).containsBean(clientBeanName);
+		verify(applicationContextMock).getBean(clientBeanName, ConfluenceClient.class);
+		verifyNoMoreInteractions(applicationContextMock);
+	}
 
-    @Test
-    void getClientWhenClientDoesNotExist() {
-        var municipalityId = "1984";
-        var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
+	@Test
+	void getClientWhenClientDoesNotExist() {
+		var municipalityId = "1984";
+		var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
 
-        when(applicationContextMock.containsBean(clientBeanName)).thenReturn(false);
+		when(applicationContextMock.containsBean(clientBeanName)).thenReturn(false);
 
-        assertThatExceptionOfType(ThrowableProblem.class)
-            .isThrownBy(() -> registry.getClient(municipalityId))
-            .satisfies(thrownProblem -> {
-                assertThat(thrownProblem.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
-                assertThat(thrownProblem.getDetail()).startsWith("No Confluence client exists for");
-            });
+		assertThatExceptionOfType(ThrowableProblem.class)
+			.isThrownBy(() -> registry.getClient(municipalityId))
+			.satisfies(thrownProblem -> {
+				assertThat(thrownProblem.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
+				assertThat(thrownProblem.getDetail()).startsWith("No Confluence client exists for");
+			});
 
-        verify(applicationContextMock).containsBean(clientBeanName);
-        verifyNoMoreInteractions(applicationContextMock);
-    }
+		verify(applicationContextMock).containsBean(clientBeanName);
+		verifyNoMoreInteractions(applicationContextMock);
+	}
 
-    private static class DummyClient implements ConfluenceClient {
+	private static class DummyClient implements ConfluenceClient {
 
-        @Override
-        public Optional<String> getContent(final String pageId) {
-            return Optional.of("");
-        }
+		@Override
+		public Optional<String> getContent(final String pageId) {
+			return Optional.of("");
+		}
 
-        @Override
-        public Optional<String> getChildren(final String pageId) {
-            return Optional.of("");
-        }
+		@Override
+		public Optional<String> getChildren(final String pageId) {
+			return Optional.of("");
+		}
 
-        @Override
-        public Optional<String> getContentVersion(final String pageId) {
-            return Optional.of("");
-        }
-    }
+		@Override
+		public Optional<String> getContentVersion(final String pageId) {
+			return Optional.of("");
+		}
+	}
 }

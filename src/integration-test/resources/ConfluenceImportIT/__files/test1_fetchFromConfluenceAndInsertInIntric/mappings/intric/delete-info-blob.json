@@ -1,33 +1,35 @@
 {
-  "name": "intric-delete-info-blob",
-  "request": {
-    "urlPathPattern": "/intric/info-blobs/([0-9a-fA-F-]{36})/",
-    "method": "DELETE"
-  },
-  "response": {
-    "transformers": [ "response-template" ],
-    "status": 200,
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "jsonBody": {
-      "items": [
-        {
-          "created_at": "{{ now }}",
-          "updated_at": "{{ now }}",
-          "id": "{{ request.pathSegments.[2] }}",
-          "metadata": {
-            "url": "...some URL that should have been stored in the info blob...",
-            "title": "...some title that should have been stored in the info blob...",
-            "embedding_model_id": "{{ randomValue type='UUID' }}",
-            "size": "{{ randomInt lower=8 upper=1000 }}"
-          },
-          "group_id": "{{ randomValue type='UUID' }}",
-          "website_id": "{{ randomValue type='UUID' }}",
-          "text": "...some text that should have been stored in the info blob..."
-        }
-      ],
-      "count": 1
-    }
-  }
+	"name": "intric-delete-info-blob",
+	"request": {
+		"urlPathPattern": "/intric/info-blobs/([0-9a-fA-F-]{36})/",
+		"method": "DELETE"
+	},
+	"response": {
+		"transformers": [
+			"response-template"
+		],
+		"status": 200,
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"jsonBody": {
+			"items": [
+				{
+					"created_at": "{{ now }}",
+					"updated_at": "{{ now }}",
+					"id": "{{ request.pathSegments.[2] }}",
+					"metadata": {
+						"url": "...some URL that should have been stored in the info blob...",
+						"title": "...some title that should have been stored in the info blob...",
+						"embedding_model_id": "{{ randomValue type='UUID' }}",
+						"size": "{{ randomInt lower=8 upper=1000 }}"
+					},
+					"group_id": "{{ randomValue type='UUID' }}",
+					"website_id": "{{ randomValue type='UUID' }}",
+					"text": "...some text that should have been stored in the info blob..."
+				}
+			],
+			"count": 1
+		}
+	}
 }
