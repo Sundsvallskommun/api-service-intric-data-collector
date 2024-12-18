@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -146,7 +147,7 @@ class ConfluenceWorkerTests {
     void processPage() {
         var pageId = "somePageId";
         var pageJson = "{\"someKey\": \"someValue\"}";
-        var updatedAt = "2024-10-17T15:55:43.819+02:00";
+        var updatedAt = OffsetDateTime.now().toString();
 
         var page = PageBuilder.create()
             .withUpdatedAt(LocalDateTime.now().minusMonths(1))
@@ -170,7 +171,7 @@ class ConfluenceWorkerTests {
     void processPageWhenPageIsMissingLocally() {
         var pageId = "somePageId";
         var pageJson = "{\"someKey\": \"someValue\"}";
-        var updatedAt = "2024-10-17T15:55:43.819+02:00";
+        var updatedAt = OffsetDateTime.now().toString();
 
         var workerSpy = spy(worker);
 
