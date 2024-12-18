@@ -1,61 +1,61 @@
 {
-  "id": "1212424",
-  "type": "page",
-  "status": "current",
-  "title": "A subsubpage",
-  "version": {
-    "by": {
-      "type": "known",
-      "username": "admin",
-      "userKey": "4028a083917e668c01917e66f5a80000",
-      "profilePicture": {
-        "path": "/images/icons/profilepics/default.svg",
-        "width": 48,
-        "height": 48,
-        "isDefault": true
-      },
-      "displayName": "Admin",
-      "_links": {
-        "self": "http://localhost:8090/rest/api/user?key=4028a083917e668c01917e66f5a80000"
-      },
-      "_expandable": {
-        "status": ""
-      }
-    },
-    "when": "2024-09-10T11:44:00.591Z",
-    "message": "",
-    "number": 1,
-    "minorEdit": false,
-    "hidden": false,
-    "_links": {
-      "self": "http://localhost:8090/rest/experimental/content/1212424/version/1"
-    },
-    "_expandable": {
-      "content": "/rest/api/content/1212424"
-    }
-  },
-  "extensions": {
-    "position": "none"
-  },
-  "_links": {
-    "webui": "/display/TEST/A+subsubpage",
-    "edit": "/pages/resumedraft.action?draftId=1212424&draftShareId=730ab5f1-deab-4886-931e-c19afb08708c",
-    "tinyui": "/x/CIAS",
-    "collection": "/rest/api/content",
-    "base": "http://localhost:8090",
-    "context": "",
-    "self": "http://localhost:8090/rest/api/content/1212424"
-  },
-  "_expandable": {
-    "container": "/rest/api/space/TEST",
-    "metadata": "",
-    "operations": "",
-    "children": "/rest/api/content/1212424/child",
-    "restrictions": "/rest/api/content/1212424/restriction/byOperation",
-    "history": "/rest/api/content/1212424/history",
-    "ancestors": "",
-    "body": "",
-    "descendants": "/rest/api/content/1212424/descendant",
-    "space": "/rest/api/space/TEST"
-  }
+	"id": "1212424",
+	"type": "page",
+	"status": "current",
+	"title": "A subsubpage",
+	"version": {
+		"by": {
+			"type": "known",
+			"username": "admin",
+			"userKey": "4028a083917e668c01917e66f5a80000",
+			"profilePicture": {
+				"path": "/images/icons/profilepics/default.svg",
+				"width": 48,
+				"height": 48,
+				"isDefault": true
+			},
+			"displayName": "Admin",
+			"_links": {
+				"self": "http://localhost:8090/rest/api/user?key=4028a083917e668c01917e66f5a80000"
+			},
+			"_expandable": {
+				"status": ""
+			}
+		},
+		"when": "2024-09-10T11:44:00.591Z",
+		"message": "",
+		"number": 1,
+		"minorEdit": false,
+		"hidden": false,
+		"_links": {
+			"self": "http://localhost:8090/rest/experimental/content/1212424/version/1"
+		},
+		"_expandable": {
+			"content": "/rest/api/content/1212424"
+		}
+	},
+	"extensions": {
+		"position": "none"
+	},
+	"_links": {
+		"webui": "/display/TEST/A+subsubpage",
+		"edit": "/pages/resumedraft.action?draftId=1212424&draftShareId=730ab5f1-deab-4886-931e-c19afb08708c",
+		"tinyui": "/x/CIAS",
+		"collection": "/rest/api/content",
+		"base": "http://localhost:8090",
+		"context": "",
+		"self": "http://localhost:8090/rest/api/content/1212424"
+	},
+	"_expandable": {
+		"container": "/rest/api/space/TEST",
+		"metadata": "",
+		"operations": "",
+		"children": "/rest/api/content/1212424/child",
+		"restrictions": "/rest/api/content/1212424/restriction/byOperation",
+		"history": "/rest/api/content/1212424/history",
+		"ancestors": "",
+		"body": "",
+		"descendants": "/rest/api/content/1212424/descendant",
+		"space": "/rest/api/space/TEST"
+	}
 }

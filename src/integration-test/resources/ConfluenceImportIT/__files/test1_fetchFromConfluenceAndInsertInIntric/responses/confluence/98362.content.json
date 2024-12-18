@@ -1,76 +1,76 @@
 {
-  "id": "98362",
-  "type": "page",
-  "status": "current",
-  "title": "Test",
-  "version": {
-    "by": {
-      "type": "known",
-      "username": "admin",
-      "userKey": "4028a083917e668c01917e66f5a80000",
-      "profilePicture": {
-        "path": "/images/icons/profilepics/default.svg",
-        "width": 48,
-        "height": 48,
-        "isDefault": true
-      },
-      "displayName": "Admin",
-      "_links": {
-        "self": "http://localhost:8090/rest/api/user?key=4028a083917e668c01917e66f5a80000"
-      },
-      "_expandable": {
-        "status": ""
-      }
-    },
-    "when": "2024-09-10T12:03:28.147Z",
-    "message": "",
-    "number": 2,
-    "minorEdit": false,
-    "hidden": false,
-    "_links": {
-      "self": "http://localhost:8090/rest/experimental/content/98362/version/2"
-    },
-    "_expandable": {
-      "content": "/rest/api/content/98362"
-    }
-  },
-  "ancestors": [],
-  "body": {
-    "storage": {
-      "value": "<p>Here are some links:</p><ul style=\"list-style-type: square;\"><li><ac:link><ri:page ri:content-title=\"Some root page\" /></ac:link></li><li><ac:link><ri:page ri:content-title=\"Prohibited root page\" /></ac:link></li></ul>",
-      "representation": "storage",
-      "_expandable": {
-        "content": "/rest/api/content/98362"
-      }
-    },
-    "_expandable": {
-      "editor": "",
-      "view": "",
-      "export_view": "",
-      "styled_view": "",
-      "anonymous_export_view": ""
-    }
-  },
-  "extensions": {
-    "position": "none"
-  },
-  "_links": {
-    "webui": "/display/TEST/Test",
-    "edit": "/pages/resumedraft.action?draftId=98362",
-    "tinyui": "/x/OoAB",
-    "collection": "/rest/api/content",
-    "base": "http://localhost:8090",
-    "context": "",
-    "self": "http://localhost:8090/rest/api/content/98362"
-  },
-  "_expandable": {
-    "container": "/rest/api/space/TEST",
-    "metadata": "",
-    "operations": "",
-    "children": "/rest/api/content/98362/child",
-    "restrictions": "/rest/api/content/98362/restriction/byOperation",
-    "history": "/rest/api/content/98362/history",
-    "descendants": "/rest/api/content/98362/descendant",
-    "space": "/rest/api/space/TEST"
-  }
+	"id": "98362",
+	"type": "page",
+	"status": "current",
+	"title": "Test",
+	"version": {
+		"by": {
+			"type": "known",
+			"username": "admin",
+			"userKey": "4028a083917e668c01917e66f5a80000",
+			"profilePicture": {
+				"path": "/images/icons/profilepics/default.svg",
+				"width": 48,
+				"height": 48,
+				"isDefault": true
+			},
+			"displayName": "Admin",
+			"_links": {
+				"self": "http://localhost:8090/rest/api/user?key=4028a083917e668c01917e66f5a80000"
+			},
+			"_expandable": {
+				"status": ""
+			}
+		},
+		"when": "2024-09-10T12:03:28.147Z",
+		"message": "",
+		"number": 2,
+		"minorEdit": false,
+		"hidden": false,
+		"_links": {
+			"self": "http://localhost:8090/rest/experimental/content/98362/version/2"
+		},
+		"_expandable": {
+			"content": "/rest/api/content/98362"
+		}
+	},
+	"ancestors": [],
+	"body": {
+		"storage": {
+			"value": "<p>Here are some links:</p><ul style=\"list-style-type: square;\"><li><ac:link><ri:page ri:content-title=\"Some root page\" /></ac:link></li><li><ac:link><ri:page ri:content-title=\"Prohibited root page\" /></ac:link></li></ul>",
+			"representation": "storage",
+			"_expandable": {
+				"content": "/rest/api/content/98362"
+			}
+		},
+		"_expandable": {
+			"editor": "",
+			"view": "",
+			"export_view": "",
+			"styled_view": "",
+			"anonymous_export_view": ""
+		}
+	},
+	"extensions": {
+		"position": "none"
+	},
+	"_links": {
+		"webui": "/display/TEST/Test",
+		"edit": "/pages/resumedraft.action?draftId=98362",
+		"tinyui": "/x/OoAB",
+		"collection": "/rest/api/content",
+		"base": "http://localhost:8090",
+		"context": "",
+		"self": "http://localhost:8090/rest/api/content/98362"
+	},
+	"_expandable": {
+		"container": "/rest/api/space/TEST",
+		"metadata": "",
+		"operations": "",
+		"children": "/rest/api/content/98362/child",
+		"restrictions": "/rest/api/content/98362/restriction/byOperation",
+		"history": "/rest/api/content/98362/history",
+		"descendants": "/rest/api/content/98362/descendant",
+		"space": "/rest/api/space/TEST"
+	}
 }

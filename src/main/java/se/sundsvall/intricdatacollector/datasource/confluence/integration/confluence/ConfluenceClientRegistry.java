@@ -10,19 +10,19 @@ import org.zalando.problem.Problem;
 @Component
 public class ConfluenceClientRegistry {
 
-    private final ApplicationContext applicationContext;
+	private final ApplicationContext applicationContext;
 
-    ConfluenceClientRegistry(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-    
-    public ConfluenceClient getClient(final String municipalityId) {
-        var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
+	ConfluenceClientRegistry(final ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
 
-        if (applicationContext.containsBean(clientBeanName)) {
-            return applicationContext.getBean(clientBeanName, ConfluenceClient.class);
-        }
+	public ConfluenceClient getClient(final String municipalityId) {
+		var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
 
-        throw Problem.valueOf(INTERNAL_SERVER_ERROR, String.format("No Confluence client exists for municipalityId %s", municipalityId));
-    }
+		if (applicationContext.containsBean(clientBeanName)) {
+			return applicationContext.getBean(clientBeanName, ConfluenceClient.class);
+		}
+
+		throw Problem.valueOf(INTERNAL_SERVER_ERROR, String.format("No Confluence client exists for municipalityId %s", municipalityId));
+	}
 }
