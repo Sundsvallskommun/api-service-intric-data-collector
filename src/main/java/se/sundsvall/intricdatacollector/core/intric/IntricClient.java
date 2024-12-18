@@ -3,6 +3,7 @@ package se.sundsvall.intricdatacollector.core.intric;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static se.sundsvall.intricdatacollector.core.intric.IntricIntegrationConfiguration.INTEGRATION_NAME;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import se.sundsvall.intricdatacollector.core.intric.model.InfoBlobsResponse;
     configuration = IntricIntegrationConfiguration.class,
     url = "${integration.intric.base-url}"
 )
+@CircuitBreaker(name = INTEGRATION_NAME)
 public interface IntricClient {
 
     @PostMapping(
