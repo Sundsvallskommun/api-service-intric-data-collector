@@ -15,7 +15,7 @@
 		<jsoup.version>1.18.3</jsoup.version>
 		<shedlock.version>6.2.0</shedlock.version>
 		<jilt.version>1.6.3</jilt.version>
-		<auth0.java-jwt.version>4.4.0</auth0.java-jwt.version>
+		<auth0.java-jwt.version>4.5.0</auth0.java-jwt.version>
 		<commons-codec.version>1.17.2</commons-codec.version>
 
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
