@@ -31,6 +31,7 @@ public class ConfluenceDataSource {
 	private final Map<String, ConfluenceWorker> workers = new HashMap<>();
 
 	ConfluenceDataSource(final ConfluenceIntegrationProperties properties,
+		final ConfluenceDataSourceHealthIndicator healthIndicator,
 		final ConfluenceClientRegistry confluenceClientRegistry,
 		final ConfluencePageMapper confluencePageMapper,
 		final DbIntegration dbIntegration,
@@ -42,7 +43,7 @@ public class ConfluenceDataSource {
 
 		properties.environments().forEach((municipalityId, environment) -> {
 			// Create a worker for the current environment
-			var worker = new ConfluenceWorker(municipalityId, properties, confluenceClientRegistry, confluencePageMapper, intricIntegration, dbIntegration, pageJsonParser);
+			var worker = new ConfluenceWorker(municipalityId, properties, healthIndicator, confluenceClientRegistry, confluencePageMapper, intricIntegration, dbIntegration, pageJsonParser);
 			// "Cache" the worker
 			workers.put(municipalityId, worker);
 
