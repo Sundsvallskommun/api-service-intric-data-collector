@@ -41,6 +41,8 @@ class ConfluenceWorkerTests {
 	private static final String INTRIC_GROUP_ID = "someIntricGroupId";
 
 	@Mock
+	private ConfluenceDataSourceHealthIndicator healthIndicatorMock;
+	@Mock
 	private ConfluenceIntegrationProperties propertiesMock;
 	@Mock
 	private ConfluenceIntegrationProperties.Environment environmentMock;
@@ -73,7 +75,7 @@ class ConfluenceWorkerTests {
 
 		when(confluenceClientRegistryMock.getClient(MUNICIPALITY_ID)).thenReturn(confluenceClientMock);
 
-		worker = new ConfluenceWorker(MUNICIPALITY_ID, propertiesMock, confluenceClientRegistryMock, pageMapperMock, intricIntegrationMock, dbIntegrationMock, pageJsonParserMock);
+		worker = new ConfluenceWorker(MUNICIPALITY_ID, propertiesMock, healthIndicatorMock, confluenceClientRegistryMock, pageMapperMock, intricIntegrationMock, dbIntegrationMock, pageJsonParserMock);
 	}
 
 	@Test
