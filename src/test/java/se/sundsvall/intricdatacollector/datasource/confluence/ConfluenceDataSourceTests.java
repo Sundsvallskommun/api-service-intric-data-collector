@@ -40,6 +40,8 @@ class ConfluenceDataSourceTests {
 	@Mock
 	private ConfluenceIntegrationProperties propertiesMock;
 	@Mock
+	private ConfluenceDataSourceHealthIndicator workerHealthIndicatorMock;
+	@Mock
 	private Map<String, ConfluenceIntegrationProperties.Environment> environmentsMock;
 	@Mock
 	private ConfluenceIntegrationProperties.Environment environmentMock1;
@@ -86,7 +88,7 @@ class ConfluenceDataSourceTests {
 	}
 
 	private ConfluenceDataSource createDataSource() {
-		return new ConfluenceDataSource(propertiesMock, confluenceClientRegistryMock, confluencePageMapperMock,
+		return new ConfluenceDataSource(propertiesMock, workerHealthIndicatorMock, confluenceClientRegistryMock, confluencePageMapperMock,
 			dbIntegrationMock, intricIntegrationMock, pageJsonParserMock, taskSchedulerMock, lockProviderMock);
 	}
 

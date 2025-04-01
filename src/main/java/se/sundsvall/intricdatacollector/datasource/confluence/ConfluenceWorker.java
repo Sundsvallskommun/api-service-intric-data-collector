@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.intricdatacollector.core.intric.IntricIntegration;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceClient;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceClientRegistry;
@@ -25,6 +26,7 @@ class ConfluenceWorker implements Runnable {
 	private static final Logger LOG = LoggerFactory.getLogger(ConfluenceWorker.class);
 
 	private final String municipalityId;
+	private final ConfluenceDataSourceHealthIndicator dataSourceHealthIndicator;
 	private final IntricIntegration intricIntegration;
 	private final DbIntegration dbIntegration;
 	private final PageJsonParser pageJsonParser;
@@ -36,12 +38,14 @@ class ConfluenceWorker implements Runnable {
 
 	ConfluenceWorker(final String municipalityId,
 		final ConfluenceIntegrationProperties properties,
+		final ConfluenceDataSourceHealthIndicator dataSourceHealthIndicator,
 		final ConfluenceClientRegistry confluenceClientRegistry,
 		final ConfluencePageMapper pageMapper,
 		final IntricIntegration intricIntegration,
 		final DbIntegration dbIntegration,
 		final PageJsonParser pageJsonParser) {
 		this.municipalityId = municipalityId;
+		this.dataSourceHealthIndicator = dataSourceHealthIndicator;
 		this.pageMapper = pageMapper;
 		this.intricIntegration = intricIntegration;
 		this.dbIntegration = dbIntegration;
@@ -62,9 +66,17 @@ class ConfluenceWorker implements Runnable {
 	@Override
 	public void run() {
 		mappings.keySet().forEach(rootId -> {
-			LOG.info("Processing tree with root {} (municipalityId: {})", rootId, municipalityId);
+			try {
+				RequestId.init();
+				LOG.info("Processing tree with root {} (municipalityId: {})", rootId, municipalityId);
+				dataSourceHealthIndicator.reset();
 
-			processTree(rootId);
+				processTree(rootId);
+			} finally {
+				LOG.info("Finished processing tree with root {} (municipalityId: {})", rootId, municipalityId);
+
+				RequestId.reset();
+			}
 		});
 	}
 
@@ -79,6 +91,8 @@ class ConfluenceWorker implements Runnable {
 				processChildren(pageId);
 			}
 		} catch (Exception e) {
+			dataSourceHealthIndicator.setUnhealthy("Error processing tree with root %s (municipalityId: %s): %s".formatted(pageId, municipalityId, e.getMessage()));
+
 			LOG.warn("Unable to process tree with root {} (municipalityId: {})", pageId, municipalityId, e);
 		}
 	}
