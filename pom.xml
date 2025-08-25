@@ -12,8 +12,8 @@
 	<version>0.1-SNAPSHOT</version>
 
 	<properties>
-		<jsoup.version>1.21.1</jsoup.version>
 		<shedlock.version>6.10.0</shedlock.version>
+		<jsoup.version>1.21.2</jsoup.version>
 		<jilt.version>1.8.3</jilt.version>
 		<auth0.java-jwt.version>4.5.0</auth0.java-jwt.version>
 		<commons-codec.version>1.19.0</commons-codec.version>
