@@ -16,7 +16,7 @@
 		<jsoup.version>1.21.2</jsoup.version>
 		<jilt.version>1.8.4</jilt.version>
 		<auth0.java-jwt.version>4.5.0</auth0.java-jwt.version>
-		<commons-codec.version>1.19.0</commons-codec.version>
+		<commons-codec.version>1.20.0</commons-codec.version>
 
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<generated-sources-java-path>src/main/java</generated-sources-java-path>
