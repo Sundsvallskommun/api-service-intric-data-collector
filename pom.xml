@@ -12,7 +12,7 @@
 	<version>0.1-SNAPSHOT</version>
 
 	<properties>
-		<shedlock.version>7.2.0</shedlock.version>
+		<shedlock.version>7.2.1</shedlock.version>
 		<jsoup.version>1.21.2</jsoup.version>
 		<jilt.version>1.8.4</jilt.version>
 		<auth0.java-jwt.version>4.5.0</auth0.java-jwt.version>
