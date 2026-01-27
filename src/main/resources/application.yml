@@ -1,6 +1,6 @@
 spring:
   application:
-    name: intricdatacollector
+    name: ai-data-collector
   flyway:
     enabled: true
   jpa:
@@ -8,6 +8,6 @@ spring:
       ddl-auto: validate
 
 openapi:
-  name: intric-data-collector
-  title: Intric Data Collector
+  name: ai-data-collector
+  title: AI Data Collector
   version: '@project.version@'

@@ -9,11 +9,15 @@ spring:
 integration:
   # Eneo
   eneo:
-    base-url: someBaseUrl
+    municipalities:
+      2281:
+        url: someUrl
+        api-key: someApiKey
     oauth2:
       token-url: someTokenUrl
-      username: someUsername
-      password: somePassword
+      client-id: someClientId
+      client-secret: someClientSecret
+      authorization-grant-type: client_credentials
     connect-timeout-in-seconds: 123
     read-timeout-in-seconds: 456
 
