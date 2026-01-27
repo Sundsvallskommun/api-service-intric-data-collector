@@ -7,11 +7,11 @@ spring:
 
 # Integrations
 integration:
-  # Intric
-  intric:
-    base-url: http://localhost:${wiremock.server.port}/intric
+  # Eneo
+  eneo:
+    base-url: http://localhost:${wiremock.server.port}/eneo
     oauth2:
-      token-url: http://localhost:${wiremock.server.port}/intric/token
+      token-url: http://localhost:${wiremock.server.port}/eneo/token
       username: someUsername
       password: somePassword
     connect-timeout-in-seconds: 123
@@ -35,9 +35,9 @@ integration:
             secret: SUPER_DUPER_S3CR3T!
         mappings:
           - root-id: 98362
-            intric-group-id: 97332ac9-b05e-46ac-abb5-2e2563e86d87
+            eneo-group-id: 97332ac9-b05e-46ac-abb5-2e2563e86d87
           - root-id: 1203442627
-            intric-group-id: bb5aaf12-8b16-455c-9e78-bc6b6e2be063
+            eneo-group-id: bb5aaf12-8b16-455c-9e78-bc6b6e2be063
         blacklisted-root-ids:
           - 1212426
         connect-timeout-in-seconds: 10

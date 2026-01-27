@@ -28,8 +28,8 @@ class ConfluenceClientRegistryTests {
 
 	@Test
 	void getClient() {
-		var municipalityId = "1984";
-		var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
+		final var municipalityId = "1984";
+		final var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
 
 		when(applicationContextMock.containsBean(clientBeanName)).thenReturn(true);
 		when(applicationContextMock.getBean(clientBeanName, ConfluenceClient.class)).thenReturn(new DummyClient());
@@ -43,8 +43,8 @@ class ConfluenceClientRegistryTests {
 
 	@Test
 	void getClientWhenClientDoesNotExist() {
-		var municipalityId = "1984";
-		var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
+		final var municipalityId = "1984";
+		final var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
 
 		when(applicationContextMock.containsBean(clientBeanName)).thenReturn(false);
 

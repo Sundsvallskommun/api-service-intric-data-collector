@@ -35,7 +35,7 @@ class PageJsonParserTests {
 
 		@Test
 		void getTitle() {
-			var title = "someTitle";
+			final var title = "someTitle";
 
 			when(documentContextMock.read(TITLE)).thenReturn(title);
 
@@ -47,7 +47,7 @@ class PageJsonParserTests {
 
 		@Test
 		void getBody() {
-			var body = "someBody";
+			final var body = "someBody";
 
 			when(documentContextMock.read(BODY)).thenReturn(body);
 
@@ -59,7 +59,7 @@ class PageJsonParserTests {
 
 		@Test
 		void getBaseUrl() {
-			var baseUrl = "someBaseUrl";
+			final var baseUrl = "someBaseUrl";
 
 			when(documentContextMock.read(BASE_URL)).thenReturn(baseUrl);
 
@@ -71,7 +71,7 @@ class PageJsonParserTests {
 
 		@Test
 		void getPath() {
-			var path = "somePath";
+			final var path = "somePath";
 
 			when(documentContextMock.read(PATH)).thenReturn(path);
 
@@ -83,7 +83,7 @@ class PageJsonParserTests {
 
 		@Test
 		void getAncestorIds() {
-			var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
+			final var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
 
 			when(documentContextMock.read(ANCESTOR_IDS)).thenReturn(ancestorIds);
 
@@ -95,7 +95,7 @@ class PageJsonParserTests {
 
 		@Test
 		void getChildIds() {
-			var childIds = List.of("someChildId", "someOtherChildId");
+			final var childIds = List.of("someChildId", "someOtherChildId");
 
 			when(documentContextMock.read(CHILD_IDS)).thenReturn(childIds);
 
@@ -107,7 +107,7 @@ class PageJsonParserTests {
 
 		@Test
 		void getUpdatedAt() {
-			var updatedAt = "someUpdatedAt";
+			final var updatedAt = "someUpdatedAt";
 
 			when(documentContextMock.read(UPDATED_AT)).thenReturn(updatedAt);
 

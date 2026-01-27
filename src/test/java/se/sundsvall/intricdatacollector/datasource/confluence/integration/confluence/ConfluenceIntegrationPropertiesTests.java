@@ -34,7 +34,7 @@ class ConfluenceIntegrationPropertiesTests {
 			assertThat(environment.blacklistedRootIds()).containsExactly("4567890");
 			assertThat(environment.mappings()).hasSize(1).first().satisfies(mapping -> {
 				assertThat(mapping.rootId()).isEqualTo("4567110901");
-				assertThat(mapping.intricGroupId()).isEqualTo("97332ac9-b05e-46ac-abb5-2e2563e86d87");
+				assertThat(mapping.eneoGroupId()).isEqualTo("97332ac9-b05e-46ac-abb5-2e2563e86d87");
 			});
 			assertThat(environment.connectTimeoutInSeconds()).isEqualTo(123);
 			assertThat(environment.readTimeoutInSeconds()).isEqualTo(456);

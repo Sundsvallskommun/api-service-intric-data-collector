@@ -26,5 +26,6 @@ public record ConfluenceWebhookData(
 	String updateTrigger){
 
 	@Builder(setterPrefix = "with", factoryMethod = "create")
-	public record Page(@NotNull Long id) {}
+	public record Page(@NotNull Long id) {
+	}
 }

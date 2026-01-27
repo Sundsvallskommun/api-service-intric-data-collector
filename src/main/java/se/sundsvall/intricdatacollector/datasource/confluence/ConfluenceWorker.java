@@ -12,13 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import se.sundsvall.dept44.requestid.RequestId;
-import se.sundsvall.intricdatacollector.core.intric.IntricIntegration;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceClient;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceClientRegistry;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationProperties;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.db.DbIntegration;
 import se.sundsvall.intricdatacollector.datasource.confluence.model.Page;
 import se.sundsvall.intricdatacollector.datasource.confluence.model.PageBuilder;
+import se.sundsvall.intricdatacollector.integration.eneo.EneoIntegration;
 
 @Transactional
 class ConfluenceWorker implements Runnable {
@@ -27,7 +27,7 @@ class ConfluenceWorker implements Runnable {
 
 	private final String municipalityId;
 	private final ConfluenceDataSourceHealthIndicator dataSourceHealthIndicator;
-	private final IntricIntegration intricIntegration;
+	private final EneoIntegration eneoIntegration;
 	private final DbIntegration dbIntegration;
 	private final PageJsonParser pageJsonParser;
 
@@ -41,13 +41,13 @@ class ConfluenceWorker implements Runnable {
 		final ConfluenceDataSourceHealthIndicator dataSourceHealthIndicator,
 		final ConfluenceClientRegistry confluenceClientRegistry,
 		final ConfluencePageMapper pageMapper,
-		final IntricIntegration intricIntegration,
+		final EneoIntegration eneoIntegration,
 		final DbIntegration dbIntegration,
 		final PageJsonParser pageJsonParser) {
 		this.municipalityId = municipalityId;
 		this.dataSourceHealthIndicator = dataSourceHealthIndicator;
 		this.pageMapper = pageMapper;
-		this.intricIntegration = intricIntegration;
+		this.eneoIntegration = eneoIntegration;
 		this.dbIntegration = dbIntegration;
 		this.pageJsonParser = pageJsonParser;
 
@@ -55,9 +55,9 @@ class ConfluenceWorker implements Runnable {
 		client = confluenceClientRegistry.getClient(municipalityId);
 
 		// Extract the mappings for the current municipality id, grouping them from Confluence root
-		// id to Intric group id
+		// id to Eneo group id
 		mappings = properties.environments().get(municipalityId).mappings().stream()
-			.collect(toMap(ConfluenceIntegrationProperties.Environment.Mapping::rootId, ConfluenceIntegrationProperties.Environment.Mapping::intricGroupId));
+			.collect(toMap(ConfluenceIntegrationProperties.Environment.Mapping::rootId, ConfluenceIntegrationProperties.Environment.Mapping::eneoGroupId));
 
 		// Extract the black-listed root ids for the current municipality id
 		blacklistedRootIds = properties.environments().get(municipalityId).blacklistedRootIds();
@@ -90,7 +90,7 @@ class ConfluenceWorker implements Runnable {
 				// Process any children of the page
 				processChildren(pageId);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			dataSourceHealthIndicator.setUnhealthy("Error processing tree with root %s (municipalityId: %s): %s".formatted(pageId, municipalityId, e.getMessage()));
 
 			LOG.warn("Unable to process tree with root {} (municipalityId: {})", pageId, municipalityId, e);
@@ -100,7 +100,7 @@ class ConfluenceWorker implements Runnable {
 	void processChildren(final String pageId) {
 		client.getChildren(pageId).ifPresent(json -> {
 			// Extract the id:s of child pages
-			var childPageIds = pageJsonParser.parse(json).getChildIds();
+			final var childPageIds = pageJsonParser.parse(json).getChildIds();
 
 			if (childPageIds.isEmpty()) {
 				LOG.info("Page {} has no children (municipalityId: {})", pageId, municipalityId);
@@ -108,7 +108,7 @@ class ConfluenceWorker implements Runnable {
 				LOG.info("Processing children of {}: {} (municipalityId: {})", pageId, childPageIds, municipalityId);
 
 				// Iterate over the child page id:s and process them
-				for (var childPageId : childPageIds) {
+				for (final var childPageId : childPageIds) {
 					processTree(childPageId);
 				}
 			}
@@ -121,12 +121,12 @@ class ConfluenceWorker implements Runnable {
 		// Get the page version data from Confluence
 		client.getContentVersion(pageId).ifPresentOrElse(json -> {
 			// Extract the updated at timestamp
-			var updatedAtInConfluenceAsString = pageJsonParser.parse(json).getUpdatedAt();
-			var updatedAtInConfluence = OffsetDateTime.parse(updatedAtInConfluenceAsString)
+			final var updatedAtInConfluenceAsString = pageJsonParser.parse(json).getUpdatedAt();
+			final var updatedAtInConfluence = OffsetDateTime.parse(updatedAtInConfluenceAsString)
 				.toLocalDateTime()
 				.truncatedTo(SECONDS);
 			// Get the current page from the db or create a new one
-			var page = dbIntegration.getPage(pageId, municipalityId)
+			final var page = dbIntegration.getPage(pageId, municipalityId)
 				.orElseGet(() -> pageMapper.newPage(municipalityId, pageId));
 
 			// If no updated-at timestamp is set - insert the page
@@ -150,7 +150,7 @@ class ConfluenceWorker implements Runnable {
 		// Get page data from Confluence
 		return client.getContent(pageId).map(json -> {
 			// Extract the page data
-			var page = pageMapper.toPage(municipalityId, pageId, json);
+			final var page = pageMapper.toPage(municipalityId, pageId, json);
 
 			// Skip any blacklisted pages
 			if (isBlacklisted(page.pageId(), page.ancestorIds())) {
@@ -159,19 +159,19 @@ class ConfluenceWorker implements Runnable {
 				return null;
 			}
 
-			// Get the Intric group id by traversing up the page tree
-			var intricGroupId = getIntricGroupId(pageId, page.ancestorIds());
-			// If we don't have an Intric group id, we can't really do anything more - bail out
-			if (isNotBlank(intricGroupId)) {
-				LOG.info("The page {} was matched with the Intric group id {} (municipalityId: {})", pageId, intricGroupId, municipalityId);
+			// Get the Eneo group id by traversing up the page tree
+			final var eneoGroupId = getEneoGroupId(pageId, page.ancestorIds());
+			// If we don't have an Eneo group id, we can't really do anything more - bail out
+			if (isNotBlank(eneoGroupId)) {
+				LOG.info("The page {} was matched with the Eneo group id {} (municipalityId: {})", pageId, eneoGroupId, municipalityId);
 			} else {
-				LOG.info("The page {} couldn't be matched with any Intric group (municipalityId: {})", pageId, municipalityId);
+				LOG.info("The page {} couldn't be matched with any Eneo group (municipalityId: {})", pageId, municipalityId);
 
 				return null;
 			}
 
 			return PageBuilder.from(page)
-				.withIntricGroupId(intricGroupId)
+				.withEneoGroupId(eneoGroupId)
 				.build();
 		});
 	}
@@ -179,11 +179,11 @@ class ConfluenceWorker implements Runnable {
 	void insertPage(final String pageId) {
 		// Get the page
 		getPageFromConfluence(pageId).ifPresentOrElse(page -> {
-			// Add an info blob to Intric
-			var blobId = intricIntegration.addInfoBlob(page.intricGroupId(), page.title(), page.bodyAsText(), page.url());
+			// Add an info blob to Eneo
+			final var blobId = eneoIntegration.addInfoBlob(page.eneoGroupId(), page.title(), page.bodyAsText(), page.url());
 
 			// Save the page
-			dbIntegration.savePage(PageBuilder.from(page).withIntricBlobId(blobId).build());
+			dbIntegration.savePage(PageBuilder.from(page).withEneoBlobId(blobId).build());
 
 			LOG.info("The page {} has been inserted (municipalityId: {})", pageId, municipalityId);
 		}, () -> LOG.info("Unable to insert the page {} since it couldn't be found in Confluence (municipalityId: {})", pageId, municipalityId));
@@ -191,16 +191,15 @@ class ConfluenceWorker implements Runnable {
 
 	void updatePage(final String pageId) {
 		// Get the page
-		getPageFromConfluence(pageId).ifPresentOrElse(page -> {
-			dbIntegration.getBlobId(pageId, municipalityId).ifPresentOrElse(blobId -> {
-				// Update the info blob in Intric
-				var newBlobId = intricIntegration.updateInfoBlob(page.intricGroupId(), blobId, page.title(), page.bodyAsText(), page.url());
-				// Save (update) the page
-				dbIntegration.savePage(PageBuilder.from(page).withIntricBlobId(newBlobId).build());
+		getPageFromConfluence(pageId).ifPresentOrElse(page -> dbIntegration.getBlobId(pageId, municipalityId).ifPresentOrElse(blobId -> {
+			// Update the info blob in Eneo
+			final var newBlobId = eneoIntegration.updateInfoBlob(page.eneoGroupId(), blobId, page.title(), page.bodyAsText(), page.url());
+			// Save (update) the page
+			dbIntegration.savePage(PageBuilder.from(page).withEneoBlobId(newBlobId).build());
 
-				LOG.info("The page {} has been updated (municipalityId: {})", pageId, municipalityId);
-			}, () -> LOG.info("Unable to update the page {} since no Intric blob id could be found (municipalityId: {})", pageId, municipalityId));
-		}, () -> LOG.info("Unable to update the page {} since it couldn't be found in Confluence (municipalityId: {})", pageId, municipalityId));
+			LOG.info("The page {} has been updated (municipalityId: {})", pageId, municipalityId);
+		}, () -> LOG.info("Unable to update the page {} since no Eneo blob id could be found (municipalityId: {})", pageId, municipalityId)),
+			() -> LOG.info("Unable to update the page {} since it couldn't be found in Confluence (municipalityId: {})", pageId, municipalityId));
 	}
 
 	void deletePage(final String pageId) {
@@ -210,8 +209,8 @@ class ConfluenceWorker implements Runnable {
 			// Delete the page
 			dbIntegration.deletePage(pageId, municipalityId);
 
-			// Delete the info blob from Intric
-			intricIntegration.deleteInfoBlob(blobId);
+			// Delete the info blob from Eneo
+			eneoIntegration.deleteInfoBlob(blobId);
 
 			LOG.info("The page {} was deleted (municipalityId: {})", pageId, municipalityId);
 		}, () -> LOG.info("Unable to delete page {} since it couldn't be found (municipalityId: {})", pageId, municipalityId));
@@ -223,16 +222,16 @@ class ConfluenceWorker implements Runnable {
 
 	boolean isBlacklisted(final String pageId, final List<String> ancestorIds) {
 		// Check if the page itself is blacklisted
-		var isBlacklisted = blacklistedRootIds.contains(pageId);
+		final var isBlacklisted = blacklistedRootIds.contains(pageId);
 
 		// Check if the page has any blacklisted ancestor
-		var hasBlacklistedAncestor = ancestorIds.stream()
+		final var hasBlacklistedAncestor = ancestorIds.stream()
 			.anyMatch(blacklistedRootIds::contains);
 
 		return isBlacklisted || hasBlacklistedAncestor;
 	}
 
-	String getIntricGroupId(final String pageId, final List<String> ancestorIds) {
+	String getEneoGroupId(final String pageId, final List<String> ancestorIds) {
 		// Check if the page itself *is* a mapping
 		if (mappings.containsKey(pageId)) {
 			return mappings.get(pageId);

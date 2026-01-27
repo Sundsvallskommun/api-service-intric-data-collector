@@ -13,8 +13,8 @@ class PageMapper {
 		return PageBuilder.create()
 			.withPageId(pageEntity.getPageId())
 			.withMunicipalityId(pageEntity.getMunicipalityId())
-			.withIntricGroupId(pageEntity.getIntricGroupId())
-			.withIntricBlobId(pageEntity.getIntricBlobId())
+			.withEneoGroupId(pageEntity.getEneoGroupId())
+			.withEneoBlobId(pageEntity.getEneoBlobId())
 			.withUpdatedAt(pageEntity.getUpdatedAt())
 			.build();
 	}
@@ -23,8 +23,8 @@ class PageMapper {
 		return PageEntityBuilder.create()
 			.withPageId(page.pageId())
 			.withMunicipalityId(page.municipalityId())
-			.withIntricGroupId(page.intricGroupId())
-			.withIntricBlobId(page.intricBlobId())
+			.withEneoGroupId(page.eneoGroupId())
+			.withEneoBlobId(page.eneoBlobId())
 			.withUpdatedAt(page.updatedAt())
 			.build();
 	}

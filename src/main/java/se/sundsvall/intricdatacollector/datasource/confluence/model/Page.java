@@ -15,8 +15,8 @@ public record Page(
 	String path,
 	LocalDateTime updatedAt,
 	List<String> ancestorIds,
-	String intricGroupId,
-	String intricBlobId) {
+	String eneoGroupId,
+	String eneoBlobId) {
 
 	public String bodyAsText() {
 		return Jsoup.parse(body).text();

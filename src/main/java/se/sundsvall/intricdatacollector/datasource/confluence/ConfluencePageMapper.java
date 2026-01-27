@@ -24,7 +24,7 @@ class ConfluencePageMapper {
 	}
 
 	Page toPage(final String municipalityId, final String pageId, final String json) {
-		var pageJson = pageJsonParser.parse(json);
+		final var pageJson = pageJsonParser.parse(json);
 
 		return PageBuilder.create()
 			.withMunicipalityId(municipalityId)

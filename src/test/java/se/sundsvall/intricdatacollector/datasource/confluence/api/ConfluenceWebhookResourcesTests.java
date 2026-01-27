@@ -24,7 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import se.sundsvall.intricdatacollector.Application;
 import se.sundsvall.intricdatacollector.datasource.confluence.ConfluenceDataSource;
@@ -45,7 +45,7 @@ class ConfluenceWebhookResourcesTests {
 
 	private HmacUtils hmacUtils;
 
-	@MockBean
+	@MockitoBean
 	private ConfluenceDataSource dataSourceMock;
 
 	@Autowired
@@ -56,7 +56,7 @@ class ConfluenceWebhookResourcesTests {
 
 	@BeforeEach
 	void setUp() {
-		var environment = properties.environments().get("1984");
+		final var environment = properties.environments().get("1984");
 
 		hmacUtils = new HmacUtils(HMAC_SHA_256, environment.webhook().security().secret());
 	}
@@ -64,9 +64,9 @@ class ConfluenceWebhookResourcesTests {
 	@ParameterizedTest
 	@EnumSource(EventType.class)
 	void handleWebhookEvent(final EventType eventType) {
-		var pageId = "1203442627";
-		var municipalityId = "1984";
-		var request = createRequest(eventType, Long.valueOf(pageId));
+		final var pageId = "1203442627";
+		final var municipalityId = "1984";
+		final var request = createRequest(eventType, Long.valueOf(pageId));
 
 		testClient.post()
 			.uri(uriBuilder -> uriBuilder.path("/{municipalityId}/confluence/webhook-event")
@@ -90,9 +90,9 @@ class ConfluenceWebhookResourcesTests {
 
 	@Test
 	void handleWebhookEventWhenSignatureVerificationFails() {
-		var municipalityId = "1984";
-		var pageId = "1203442627";
-		var request = createRequest(PAGE_CREATED, Long.valueOf(pageId));
+		final var municipalityId = "1984";
+		final var pageId = "1203442627";
+		final var request = createRequest(PAGE_CREATED, Long.valueOf(pageId));
 
 		testClient.post()
 			.uri(uriBuilder -> uriBuilder.path("/{municipalityId}/confluence/webhook-event")
@@ -122,11 +122,11 @@ class ConfluenceWebhookResourcesTests {
 
 	private String createHmacSignature(final ConfluenceWebhookData request) {
 		try {
-			var body = objectMapper.writeValueAsString(request);
-			var minifiedBody = objectMapper.readTree(body).toString();
+			final var body = objectMapper.writeValueAsString(request);
+			final var minifiedBody = objectMapper.readTree(body).toString();
 
 			return "sha256=" + hmacUtils.hmacHex(minifiedBody);
-		} catch (JsonProcessingException e) {
+		} catch (final JsonProcessingException e) {
 			throw new IllegalStateException("Unable to create HMAC signature", e);
 		}
 	}

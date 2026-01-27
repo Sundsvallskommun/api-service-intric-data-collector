@@ -10,18 +10,15 @@
 	<groupId>se.sundsvall</groupId>
 	<artifactId>intric-data-collector</artifactId>
 	<version>0.1-SNAPSHOT</version>
-
 	<properties>
 		<shedlock.version>7.5.0</shedlock.version>
 		<jsoup.version>1.22.1</jsoup.version>
 		<jilt.version>1.9.1</jilt.version>
 		<auth0.java-jwt.version>4.5.0</auth0.java-jwt.version>
 		<commons-codec.version>1.20.0</commons-codec.version>
-
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<generated-sources-java-path>src/main/java</generated-sources-java-path>
 	</properties>
-
 	<dependencies>
 		<!-- Test -->
 		<dependency>
@@ -39,7 +36,6 @@
 			<artifactId>mariadb</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<!-- Framework -->
 		<dependency>
 			<groupId>se.sundsvall.dept44</groupId>
@@ -53,7 +49,6 @@
 			<groupId>se.sundsvall.dept44</groupId>
 			<artifactId>dept44-common-validators</artifactId>
 		</dependency>
-
 		<!-- JPA & JDBC -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -68,7 +63,6 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
 		</dependency>
-
 		<!-- Other -->
 		<dependency>
 			<groupId>net.javacrumbs.shedlock</groupId>
@@ -80,7 +74,6 @@
 			<artifactId>shedlock-provider-jdbc-template</artifactId>
 			<version>${shedlock.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -103,7 +96,6 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -117,7 +109,6 @@
 					</compilerArgs>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
@@ -138,30 +129,19 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>
 					<excludes>
 						<exclude>**/intricdatacollector/Application*</exclude>
-						<exclude>**/intricdatacollector/configuration/*</exclude>
-						<!-- Exclude Intric configuration for now -->
-						<exclude>**/IntricIntegrationConfiguration*</exclude>
-						<!-- Exclude Confluence webhook signature filter internals for now -->
-						<exclude>**/*WebhookSignatureVerificationFilter*</exclude>
-						<exclude>**/*BodyCachingHttpServletRequestWrapper*</exclude>
-						<exclude>**/*BodyCachingServletInputStream*</exclude>
-						<!--
-							Exclude builders until jilt changes the retention policy to either CLASS
-							or RUNTIME on the @Builder annotation
-						-->
-						<exclude>**/intricdatacollector/**/*Builder*</exclude>
-						<exclude>**/intricdatacollector/**/*Builder*</exclude>
+						<!-- Error handler lambda is only triggered by real HTTP errors -->
+						<exclude>**/intricdatacollector/integration/eneo/EneoIntegrationConfiguration*</exclude>
+						<!-- BodyCachingServletInputStream has unreachable IOException catch block (ByteArrayInputStream.available() never throws) -->
+						<exclude>**/WebhookSignatureVerificationConfiguration$*BodyCachingServletInputStream*</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
