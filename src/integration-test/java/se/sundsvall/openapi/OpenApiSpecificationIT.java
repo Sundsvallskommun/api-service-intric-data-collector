@@ -18,7 +18,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.util.UriComponentsBuilder;
 import se.sundsvall.dept44.util.ResourceUtils;
-import se.sundsvall.intricdatacollector.Application;
+import se.sundsvall.aidatacollector.Application;
 
 @ActiveProfiles("it")
 @SpringBootTest(

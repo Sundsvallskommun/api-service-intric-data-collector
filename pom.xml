@@ -8,8 +8,8 @@
 		<relativePath />
 	</parent>
 	<groupId>se.sundsvall</groupId>
-	<artifactId>intric-data-collector</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<artifactId>ai-data-collector</artifactId>
+	<version>1.0</version>
 	<properties>
 		<shedlock.version>7.5.0</shedlock.version>
 		<jsoup.version>1.22.1</jsoup.version>
@@ -134,9 +134,9 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>
 					<excludes>
-						<exclude>**/intricdatacollector/Application*</exclude>
+						<exclude>**/aidatacollector/Application*</exclude>
 						<!-- Error handler lambda is only triggered by real HTTP errors -->
-						<exclude>**/intricdatacollector/integration/eneo/EneoIntegrationConfiguration*</exclude>
+						<exclude>**/aidatacollector/integration/eneo/EneoIntegrationConfiguration*</exclude>
 						<!-- BodyCachingServletInputStream has unreachable IOException catch block (ByteArrayInputStream.available() never throws) -->
 						<exclude>**/WebhookSignatureVerificationConfiguration$*BodyCachingServletInputStream*</exclude>
 					</excludes>
