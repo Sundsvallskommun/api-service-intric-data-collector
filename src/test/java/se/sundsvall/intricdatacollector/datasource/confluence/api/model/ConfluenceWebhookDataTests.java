@@ -9,13 +9,13 @@ class ConfluenceWebhookDataTests {
 
 	@Test
 	void creationAndAccessors() {
-		var eventType = PAGE_CREATED.name().toLowerCase();
-		var pageId = 12345L;
-		var userKey = "someUserKey";
-		var timestamp = 1234567L;
-		var updateTrigger = "someUpdateTrigger";
+		final var eventType = PAGE_CREATED.name().toLowerCase();
+		final var pageId = 12345L;
+		final var userKey = "someUserKey";
+		final var timestamp = 1234567L;
+		final var updateTrigger = "someUpdateTrigger";
 
-		var webhookData = new ConfluenceWebhookData(eventType, new ConfluenceWebhookData.Page(pageId), userKey, timestamp, updateTrigger);
+		final var webhookData = new ConfluenceWebhookData(eventType, new ConfluenceWebhookData.Page(pageId), userKey, timestamp, updateTrigger);
 
 		assertThat(webhookData.eventType()).isEqualTo(eventType);
 		assertThat(webhookData.page().id()).isEqualTo(pageId);

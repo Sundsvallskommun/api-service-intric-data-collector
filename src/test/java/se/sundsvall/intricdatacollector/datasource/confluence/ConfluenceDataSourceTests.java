@@ -23,10 +23,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
-import se.sundsvall.intricdatacollector.core.intric.IntricIntegration;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceClientRegistry;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationProperties;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.db.DbIntegration;
+import se.sundsvall.intricdatacollector.integration.eneo.EneoIntegration;
 
 @ExtendWith({
 	MockitoExtension.class, ResourceLoaderExtension.class
@@ -60,7 +60,7 @@ class ConfluenceDataSourceTests {
 	@Mock
 	private DbIntegration dbIntegrationMock;
 	@Mock
-	private IntricIntegration intricIntegrationMock;
+	private EneoIntegration eneoIntegrationMock;
 	@Mock
 	private TaskScheduler taskSchedulerMock;
 	@Mock
@@ -89,17 +89,17 @@ class ConfluenceDataSourceTests {
 
 	private ConfluenceDataSource createDataSource() {
 		return new ConfluenceDataSource(propertiesMock, workerHealthIndicatorMock, confluenceClientRegistryMock, confluencePageMapperMock,
-			dbIntegrationMock, intricIntegrationMock, pageJsonParserMock, taskSchedulerMock, lockProviderMock);
+			dbIntegrationMock, eneoIntegrationMock, pageJsonParserMock, taskSchedulerMock, lockProviderMock);
 	}
 
 	@Test
 	void creationAndScheduling() {
-		try (var defaultLockingTaskExecutorMock = mockConstruction(DefaultLockingTaskExecutor.class);
-			var lockConfigurationMock = mockConstruction(LockConfiguration.class);
-			var defaultLockManagerMock = mockConstruction(DefaultLockManager.class);
-			var cronTriggerMock = mockConstruction(CronTrigger.class);
-			var lockableTaskScheduler = mockConstruction(LockableTaskScheduler.class);
-			var workerMock = mockConstruction(ConfluenceWorker.class)) {
+		try (final var defaultLockingTaskExecutorMock = mockConstruction(DefaultLockingTaskExecutor.class);
+			final var lockConfigurationMock = mockConstruction(LockConfiguration.class);
+			final var defaultLockManagerMock = mockConstruction(DefaultLockManager.class);
+			final var cronTriggerMock = mockConstruction(CronTrigger.class);
+			final var lockableTaskScheduler = mockConstruction(LockableTaskScheduler.class);
+			final var workerMock = mockConstruction(ConfluenceWorker.class)) {
 			// Create the data source
 			dataSource = createDataSource();
 
@@ -126,7 +126,7 @@ class ConfluenceDataSourceTests {
 
 	@Test
 	void insertPage() {
-		try (var workerMock = mockConstruction(ConfluenceWorker.class)) {
+		try (final var workerMock = mockConstruction(ConfluenceWorker.class)) {
 			// Create the data source
 			dataSource = createDataSource();
 
@@ -134,7 +134,7 @@ class ConfluenceDataSourceTests {
 			dataSource.insertPage(MUNICIPALITY_ID_1, PAGE_ID);
 
 			// Extract the mocked, constructed worker and verify
-			var actualWorker = dataSource.getWorker(MUNICIPALITY_ID_1);
+			final var actualWorker = dataSource.getWorker(MUNICIPALITY_ID_1);
 			verify(actualWorker).insertPage(PAGE_ID);
 			verifyNoMoreInteractions(actualWorker);
 		}
@@ -142,7 +142,7 @@ class ConfluenceDataSourceTests {
 
 	@Test
 	void updatePage() {
-		try (var workerMock = mockConstruction(ConfluenceWorker.class)) {
+		try (final var workerMock = mockConstruction(ConfluenceWorker.class)) {
 			// Create the data source
 			dataSource = createDataSource();
 
@@ -150,7 +150,7 @@ class ConfluenceDataSourceTests {
 			dataSource.updatePage(MUNICIPALITY_ID_1, PAGE_ID);
 
 			// Extract the mocked, constructed worker and verify
-			var actualWorker = dataSource.getWorker(MUNICIPALITY_ID_1);
+			final var actualWorker = dataSource.getWorker(MUNICIPALITY_ID_1);
 			verify(actualWorker).updatePage(PAGE_ID);
 			verifyNoMoreInteractions(actualWorker);
 		}
@@ -158,7 +158,7 @@ class ConfluenceDataSourceTests {
 
 	@Test
 	void deletePage() {
-		try (var workerMock = mockConstruction(ConfluenceWorker.class)) {
+		try (final var workerMock = mockConstruction(ConfluenceWorker.class)) {
 			// Create the data source
 			dataSource = createDataSource();
 
@@ -166,7 +166,7 @@ class ConfluenceDataSourceTests {
 			dataSource.deletePage(MUNICIPALITY_ID_1, PAGE_ID);
 
 			// Extract the mocked, constructed worker and verify
-			var actualWorker = dataSource.getWorker(MUNICIPALITY_ID_1);
+			final var actualWorker = dataSource.getWorker(MUNICIPALITY_ID_1);
 			verify(actualWorker).deletePage(PAGE_ID);
 			verifyNoMoreInteractions(actualWorker);
 		}

@@ -7,8 +7,8 @@ spring:
 
 # Integrations
 integration:
-  # Intric
-  intric:
+  # Eneo
+  eneo:
     base-url: someBaseUrl
     oauth2:
       token-url: someTokenUrl
@@ -35,7 +35,7 @@ integration:
             secret: SUPER_DUPER_S3CR3T!
         mappings:
           - root-id: 4567110901
-            intric-group-id: 97332ac9-b05e-46ac-abb5-2e2563e86d87
+            eneo-group-id: 97332ac9-b05e-46ac-abb5-2e2563e86d87
         blacklisted-root-ids:
           - 4567890
         connect-timeout-in-seconds: 123

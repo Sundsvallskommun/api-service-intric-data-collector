@@ -23,20 +23,23 @@ import se.sundsvall.dept44.configuration.feign.decoder.ProblemErrorDecoder;
 @EnableConfigurationProperties(ConfluenceIntegrationProperties.class)
 class ConfluenceIntegrationConfiguration {
 
+	static final String CLIENT_ID = "confluence";
 	private static final Logger LOG = LoggerFactory.getLogger(ConfluenceIntegrationConfiguration.class);
 
-	static final String CLIENT_ID = "confluence";
+	ConfluenceIntegrationConfiguration() {
+		// Intentionally left empty
+	}
 
 	@Bean
 	static BeanDefinitionRegistryPostProcessor confluenceClientBeanDefinitionRegistryPostProcessor(final ApplicationContext applicationContext) {
-		var binder = Binder.get(applicationContext.getEnvironment());
-		var properties = binder.bind("integration.confluence", ConfluenceIntegrationProperties.class).get();
+		final var binder = Binder.get(applicationContext.getEnvironment());
+		final var properties = binder.bind("integration.confluence", ConfluenceIntegrationProperties.class).get();
 
 		return registry -> properties.environments().forEach((municipalityId, environment) -> {
-			var beanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
-			var clientName = "%s-%s".formatted(CLIENT_ID, municipalityId);
+			final var beanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
+			final var clientName = "%s-%s".formatted(CLIENT_ID, municipalityId);
 
-			var beanDefinition = new GenericBeanDefinition();
+			final var beanDefinition = new GenericBeanDefinition();
 			beanDefinition.setBeanClass(ConfluenceClient.class);
 			beanDefinition.setInstanceSupplier(() -> new FeignClientBuilder(applicationContext)
 				.forType(ConfluenceClient.class, "%s-%s".formatted(CLIENT_ID, municipalityId))

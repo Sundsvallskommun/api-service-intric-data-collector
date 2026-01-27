@@ -17,7 +17,7 @@ public class ConfluenceClientRegistry {
 	}
 
 	public ConfluenceClient getClient(final String municipalityId) {
-		var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
+		final var clientBeanName = "%s.%s".formatted(CLIENT_ID, municipalityId);
 
 		if (applicationContext.containsBean(clientBeanName)) {
 			return applicationContext.getBean(clientBeanName, ConfluenceClient.class);

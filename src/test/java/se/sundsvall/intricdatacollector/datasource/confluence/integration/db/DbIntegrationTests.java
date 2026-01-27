@@ -23,8 +23,8 @@ class DbIntegrationTests {
 
 	static final String PAGE_ID = "somePageId";
 	static final String MUNICIPALITY_ID = "someMunicipalityId";
-	static final String INTRIC_GROUP_ID = "someIntricGroupId";
-	static final String INTRIC_BLOB_ID = "someIntricBlobId";
+	static final String ENEO_GROUP_ID = "someEneoGroupId";
+	static final String ENEO_BLOB_ID = "someEneoBlobId";
 	static final LocalDateTime UPDATED_AT = LocalDateTime.now().minusMonths(3);
 
 	@Mock
@@ -37,9 +37,9 @@ class DbIntegrationTests {
 
 	@Test
 	void getBlobId() {
-		when(pageRepositoryMock.findBlobIdByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID)).thenReturn(of(INTRIC_BLOB_ID));
+		when(pageRepositoryMock.findBlobIdByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID)).thenReturn(of(ENEO_BLOB_ID));
 
-		assertThat(dbIntegration.getBlobId(PAGE_ID, MUNICIPALITY_ID)).hasValue(INTRIC_BLOB_ID);
+		assertThat(dbIntegration.getBlobId(PAGE_ID, MUNICIPALITY_ID)).hasValue(ENEO_BLOB_ID);
 
 		verify(pageRepositoryMock).findBlobIdByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID);
 		verifyNoMoreInteractions(pageRepositoryMock);
@@ -47,24 +47,24 @@ class DbIntegrationTests {
 
 	@Test
 	void getPage() {
-		var pageEntity = PageEntityBuilder.create()
+		final var pageEntity = PageEntityBuilder.create()
 			.withPageId(PAGE_ID)
 			.withMunicipalityId(MUNICIPALITY_ID)
-			.withIntricGroupId(INTRIC_GROUP_ID)
-			.withIntricBlobId(INTRIC_BLOB_ID)
+			.withEneoGroupId(ENEO_GROUP_ID)
+			.withEneoBlobId(ENEO_BLOB_ID)
 			.withUpdatedAt(UPDATED_AT)
 			.build();
 
 		when(pageRepositoryMock.findPageEntityByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID)).thenReturn(of(pageEntity));
 		when(pageMapperMock.toPage(pageEntity)).thenCallRealMethod();
 
-		var page = dbIntegration.getPage(PAGE_ID, MUNICIPALITY_ID);
+		final var page = dbIntegration.getPage(PAGE_ID, MUNICIPALITY_ID);
 
 		assertThat(page).isNotEmpty().hasValueSatisfying(actualPage -> {
 			assertThat(actualPage.pageId()).isEqualTo(PAGE_ID);
 			assertThat(actualPage.municipalityId()).isEqualTo(MUNICIPALITY_ID);
-			assertThat(actualPage.intricGroupId()).isEqualTo(INTRIC_GROUP_ID);
-			assertThat(actualPage.intricBlobId()).isEqualTo(INTRIC_BLOB_ID);
+			assertThat(actualPage.eneoGroupId()).isEqualTo(ENEO_GROUP_ID);
+			assertThat(actualPage.eneoBlobId()).isEqualTo(ENEO_BLOB_ID);
 			assertThat(actualPage.updatedAt()).isEqualTo(UPDATED_AT);
 		});
 
@@ -75,13 +75,13 @@ class DbIntegrationTests {
 
 	@Test
 	void savePage() {
-		var pageEntityCaptor = ArgumentCaptor.forClass(PageEntity.class);
+		final var pageEntityCaptor = ArgumentCaptor.forClass(PageEntity.class);
 
-		var page = PageBuilder.create()
+		final var page = PageBuilder.create()
 			.withPageId(PAGE_ID)
 			.withMunicipalityId(MUNICIPALITY_ID)
-			.withIntricGroupId(INTRIC_GROUP_ID)
-			.withIntricBlobId(INTRIC_BLOB_ID)
+			.withEneoGroupId(ENEO_GROUP_ID)
+			.withEneoBlobId(ENEO_BLOB_ID)
 			.withUpdatedAt(UPDATED_AT)
 			.build();
 
@@ -96,8 +96,8 @@ class DbIntegrationTests {
 		assertThat(pageEntityCaptor.getValue()).satisfies(pageEntity -> {
 			assertThat(pageEntity.getPageId()).isEqualTo(PAGE_ID);
 			assertThat(pageEntity.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
-			assertThat(pageEntity.getIntricGroupId()).isEqualTo(INTRIC_GROUP_ID);
-			assertThat(pageEntity.getIntricBlobId()).isEqualTo(INTRIC_BLOB_ID);
+			assertThat(pageEntity.getEneoGroupId()).isEqualTo(ENEO_GROUP_ID);
+			assertThat(pageEntity.getEneoBlobId()).isEqualTo(ENEO_BLOB_ID);
 			assertThat(pageEntity.getUpdatedAt()).isEqualTo(UPDATED_AT);
 		});
 	}

@@ -21,13 +21,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
-import se.sundsvall.intricdatacollector.core.intric.IntricIntegration;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceClient;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceClientRegistry;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationProperties;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.db.DbIntegration;
 import se.sundsvall.intricdatacollector.datasource.confluence.model.Page;
 import se.sundsvall.intricdatacollector.datasource.confluence.model.PageBuilder;
+import se.sundsvall.intricdatacollector.integration.eneo.EneoIntegration;
 
 @ExtendWith({
 	MockitoExtension.class, ResourceLoaderExtension.class
@@ -38,7 +38,7 @@ class ConfluenceWorkerTests {
 
 	private static final String ROOT_ID = "98362";
 	private static final String BLACKLISTED_ROOT_ID = "1212426";
-	private static final String INTRIC_GROUP_ID = "someIntricGroupId";
+	private static final String ENEO_GROUP_ID = "someEneoGroupId";
 
 	@Mock
 	private ConfluenceDataSourceHealthIndicator healthIndicatorMock;
@@ -59,7 +59,7 @@ class ConfluenceWorkerTests {
 	@Mock
 	private ConfluenceClient confluenceClientMock;
 	@Mock
-	private IntricIntegration intricIntegrationMock;
+	private EneoIntegration eneoIntegrationMock;
 
 	private ConfluenceWorker worker;
 
@@ -71,16 +71,16 @@ class ConfluenceWorkerTests {
 		when(environmentMock.blacklistedRootIds()).thenReturn(List.of("1212426"));
 		// Set up a single mapping
 		when(environmentMock.mappings()).thenReturn(List.of(
-			new ConfluenceIntegrationProperties.Environment.Mapping(INTRIC_GROUP_ID, ROOT_ID)));
+			new ConfluenceIntegrationProperties.Environment.Mapping(ENEO_GROUP_ID, ROOT_ID)));
 
 		when(confluenceClientRegistryMock.getClient(MUNICIPALITY_ID)).thenReturn(confluenceClientMock);
 
-		worker = new ConfluenceWorker(MUNICIPALITY_ID, propertiesMock, healthIndicatorMock, confluenceClientRegistryMock, pageMapperMock, intricIntegrationMock, dbIntegrationMock, pageJsonParserMock);
+		worker = new ConfluenceWorker(MUNICIPALITY_ID, propertiesMock, healthIndicatorMock, confluenceClientRegistryMock, pageMapperMock, eneoIntegrationMock, dbIntegrationMock, pageJsonParserMock);
 	}
 
 	@Test
 	void run() {
-		var workerSpy = spy(worker);
+		final var workerSpy = spy(worker);
 
 		doNothing().when(workerSpy).processTree(ROOT_ID);
 
@@ -91,10 +91,10 @@ class ConfluenceWorkerTests {
 
 	@Test
 	void processTree() {
-		var pageId = "somePageId";
-		var otherPageId = "someOtherPageId";
+		final var pageId = "somePageId";
+		final var otherPageId = "someOtherPageId";
 
-		var workerSpy = spy(worker);
+		final var workerSpy = spy(worker);
 
 		when(workerSpy.isBlacklisted(anyString())).thenReturn(false, true);
 		doNothing().when(workerSpy).processPage(pageId);
@@ -113,11 +113,11 @@ class ConfluenceWorkerTests {
 
 	@Test
 	void processChildren() {
-		var pageId = "somePageId";
-		var childIds = List.of("someChildId", "someOtherChildId");
-		var pageJson = "{\"someKey\": \"someValue\"}";
+		final var pageId = "somePageId";
+		final var childIds = List.of("someChildId", "someOtherChildId");
+		final var pageJson = "{\"someKey\": \"someValue\"}";
 
-		var workerSpy = spy(worker);
+		final var workerSpy = spy(worker);
 
 		when(confluenceClientMock.getChildren(pageId)).thenReturn(Optional.of(pageJson));
 		when(pageJsonParserMock.parse(pageJson)).thenReturn(pageJsonMock);
@@ -131,10 +131,10 @@ class ConfluenceWorkerTests {
 
 	@Test
 	void processChildrenWhenThereAreNoChildren() {
-		var pageId = "somePageId";
-		var pageJson = "{\"someKey\": \"someValue\"}";
+		final var pageId = "somePageId";
+		final var pageJson = "{\"someKey\": \"someValue\"}";
 
-		var workerSpy = spy(worker);
+		final var workerSpy = spy(worker);
 
 		when(confluenceClientMock.getChildren(pageId)).thenReturn(Optional.of(pageJson));
 		when(pageJsonParserMock.parse(pageJson)).thenReturn(pageJsonMock);
@@ -147,15 +147,15 @@ class ConfluenceWorkerTests {
 
 	@Test
 	void processPage() {
-		var pageId = "somePageId";
-		var pageJson = "{\"someKey\": \"someValue\"}";
-		var updatedAt = OffsetDateTime.now().toString();
+		final var pageId = "somePageId";
+		final var pageJson = "{\"someKey\": \"someValue\"}";
+		final var updatedAt = OffsetDateTime.now().toString();
 
-		var page = PageBuilder.create()
+		final var page = PageBuilder.create()
 			.withUpdatedAt(LocalDateTime.now().minusMonths(1))
 			.build();
 
-		var workerSpy = spy(worker);
+		final var workerSpy = spy(worker);
 
 		when(confluenceClientMock.getContentVersion(pageId)).thenReturn(Optional.of(pageJson));
 		when(pageJsonParserMock.parse(pageJson)).thenReturn(pageJsonMock);
@@ -171,11 +171,11 @@ class ConfluenceWorkerTests {
 
 	@Test
 	void processPageWhenPageIsMissingLocally() {
-		var pageId = "somePageId";
-		var pageJson = "{\"someKey\": \"someValue\"}";
-		var updatedAt = OffsetDateTime.now().toString();
+		final var pageId = "somePageId";
+		final var pageJson = "{\"someKey\": \"someValue\"}";
+		final var updatedAt = OffsetDateTime.now().toString();
 
-		var workerSpy = spy(worker);
+		final var workerSpy = spy(worker);
 
 		when(confluenceClientMock.getContentVersion(pageId)).thenReturn(Optional.of(pageJson));
 		when(pageJsonParserMock.parse(pageJson)).thenReturn(pageJsonMock);
@@ -192,43 +192,43 @@ class ConfluenceWorkerTests {
 
 	@Test
 	void getPageFromConfluence() {
-		var pageId = "somePageId";
-		var intricGroupId = "someIntricGroupId";
-		var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
-		var pageJson = "{\"someKey\": \"someValue\"}";
-		var page = PageBuilder.create()
+		final var pageId = "somePageId";
+		final var eneoGroupId = "someEneoGroupId";
+		final var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
+		final var pageJson = "{\"someKey\": \"someValue\"}";
+		final var page = PageBuilder.create()
 			.withPageId(pageId)
 			.withAncestorIds(ancestorIds)
 			.build();
 
-		var workerSpy = spy(worker);
+		final var workerSpy = spy(worker);
 
 		when(confluenceClientMock.getContent(pageId)).thenReturn(Optional.of(pageJson));
 		when(pageMapperMock.toPage(MUNICIPALITY_ID, pageId, pageJson)).thenReturn(page);
 		when(workerSpy.isBlacklisted(pageId, ancestorIds)).thenReturn(false);
-		when(workerSpy.getIntricGroupId(pageId, ancestorIds)).thenReturn(intricGroupId);
+		when(workerSpy.getEneoGroupId(pageId, ancestorIds)).thenReturn(eneoGroupId);
 
-		var result = workerSpy.getPageFromConfluence(pageId);
+		final var result = workerSpy.getPageFromConfluence(pageId);
 
-		assertThat(result).hasValueSatisfying(actualResult -> assertThat(actualResult.intricGroupId()).isEqualTo(intricGroupId));
+		assertThat(result).hasValueSatisfying(actualResult -> assertThat(actualResult.eneoGroupId()).isEqualTo(eneoGroupId));
 
 		verify(confluenceClientMock).getContent(pageId);
 		verify(pageMapperMock).toPage(MUNICIPALITY_ID, pageId, pageJson);
 		verify(workerSpy).isBlacklisted(pageId, ancestorIds);
-		verify(workerSpy).getIntricGroupId(pageId, ancestorIds);
+		verify(workerSpy).getEneoGroupId(pageId, ancestorIds);
 	}
 
 	@Test
 	void getPageFromConfluenceWhenPageIsBlacklisted() {
-		var pageId = "somePageId";
-		var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
-		var pageJson = "{\"someKey\": \"someValue\"}";
-		var page = PageBuilder.create()
+		final var pageId = "somePageId";
+		final var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
+		final var pageJson = "{\"someKey\": \"someValue\"}";
+		final var page = PageBuilder.create()
 			.withPageId(pageId)
 			.withAncestorIds(ancestorIds)
 			.build();
 
-		var workerSpy = spy(worker);
+		final var workerSpy = spy(worker);
 
 		when(confluenceClientMock.getContent(pageId)).thenReturn(Optional.of(pageJson));
 		when(pageMapperMock.toPage(MUNICIPALITY_ID, pageId, pageJson)).thenReturn(page);
@@ -242,120 +242,120 @@ class ConfluenceWorkerTests {
 	}
 
 	@Test
-	void getPageFromConfluenceWhenNoMatchingIntricGroupIdIsFound() {
-		var pageId = "somePageId";
-		var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
-		var pageJson = "{\"someKey\": \"someValue\"}";
-		var page = PageBuilder.create()
+	void getPageFromConfluenceWhenNoMatchingEneoGroupIdIsFound() {
+		final var pageId = "somePageId";
+		final var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
+		final var pageJson = "{\"someKey\": \"someValue\"}";
+		final var page = PageBuilder.create()
 			.withPageId(pageId)
 			.withAncestorIds(ancestorIds)
 			.build();
 
-		var workerSpy = spy(worker);
+		final var workerSpy = spy(worker);
 
 		when(confluenceClientMock.getContent(pageId)).thenReturn(Optional.of(pageJson));
 		when(pageMapperMock.toPage(MUNICIPALITY_ID, pageId, pageJson)).thenReturn(page);
 		when(workerSpy.isBlacklisted(pageId, ancestorIds)).thenReturn(false);
-		when(workerSpy.getIntricGroupId(pageId, ancestorIds)).thenReturn(null);
+		when(workerSpy.getEneoGroupId(pageId, ancestorIds)).thenReturn(null);
 
 		assertThat(workerSpy.getPageFromConfluence(pageId)).isEmpty();
 
 		verify(confluenceClientMock).getContent(pageId);
 		verify(pageMapperMock).toPage(MUNICIPALITY_ID, pageId, pageJson);
 		verify(workerSpy).isBlacklisted(pageId, ancestorIds);
-		verify(workerSpy).getIntricGroupId(pageId, ancestorIds);
+		verify(workerSpy).getEneoGroupId(pageId, ancestorIds);
 	}
 
 	@Test
 	void insertPage() {
-		var pageId = "somePageId";
-		var intricGroupId = "someIntricGroupId";
-		var intricBlobId = "someIntricBlobId";
-		var title = "someTitle";
-		var body = "someBody";
-		var baseUrl = "someBaseUrl";
-		var path = "somePath";
+		final var pageId = "somePageId";
+		final var eneoGroupId = "someEneoGroupId";
+		final var eneoBlobId = "someEneoBlobId";
+		final var title = "someTitle";
+		final var body = "someBody";
+		final var baseUrl = "someBaseUrl";
+		final var path = "somePath";
 
-		var page = PageBuilder.create()
+		final var page = PageBuilder.create()
 			.withPageId(pageId)
-			.withIntricGroupId(intricGroupId)
-			.withIntricBlobId(intricBlobId)
+			.withEneoGroupId(eneoGroupId)
+			.withEneoBlobId(eneoBlobId)
 			.withTitle(title)
 			.withBody(body)
 			.withBaseUrl(baseUrl)
 			.withPath(path)
 			.build();
 
-		var workerSpy = spy(worker);
-		var pageArgumentCaptor = ArgumentCaptor.forClass(Page.class);
+		final var workerSpy = spy(worker);
+		final var pageArgumentCaptor = ArgumentCaptor.forClass(Page.class);
 
 		when(workerSpy.getPageFromConfluence(pageId)).thenReturn(Optional.of(page));
-		when(intricIntegrationMock.addInfoBlob(intricGroupId, title, body, baseUrl.concat(path))).thenReturn(intricBlobId);
+		when(eneoIntegrationMock.addInfoBlob(eneoGroupId, title, body, baseUrl.concat(path))).thenReturn(eneoBlobId);
 
 		workerSpy.insertPage(pageId);
 
 		verify(workerSpy).getPageFromConfluence(pageId);
 		verify(dbIntegrationMock).savePage(pageArgumentCaptor.capture());
-		verify(intricIntegrationMock).addInfoBlob(intricGroupId, title, body, baseUrl.concat(path));
-		verifyNoMoreInteractions(dbIntegrationMock, intricIntegrationMock);
+		verify(eneoIntegrationMock).addInfoBlob(eneoGroupId, title, body, baseUrl.concat(path));
+		verifyNoMoreInteractions(dbIntegrationMock, eneoIntegrationMock);
 
-		var savedPage = pageArgumentCaptor.getValue();
-		assertThat(savedPage.intricBlobId()).isEqualTo(intricBlobId);
+		final var savedPage = pageArgumentCaptor.getValue();
+		assertThat(savedPage.eneoBlobId()).isEqualTo(eneoBlobId);
 	}
 
 	@Test
 	void updatePage() {
-		var pageId = "somePageId";
-		var intricGroupId = "someIntricGroupId";
-		var intricBlobId = "someIntricBlobId";
-		var newIntricBlobId = "someNewIntricBlobId";
-		var title = "someTitle";
-		var body = "someBody";
-		var baseUrl = "someBaseUrl";
-		var path = "somePath";
+		final var pageId = "somePageId";
+		final var eneoGroupId = "someEneoGroupId";
+		final var eneoBlobId = "someEneoBlobId";
+		final var newEneoBlobId = "someNewEneoBlobId";
+		final var title = "someTitle";
+		final var body = "someBody";
+		final var baseUrl = "someBaseUrl";
+		final var path = "somePath";
 
-		var page = PageBuilder.create()
+		final var page = PageBuilder.create()
 			.withPageId(pageId)
-			.withIntricGroupId(intricGroupId)
-			.withIntricBlobId(intricBlobId)
+			.withEneoGroupId(eneoGroupId)
+			.withEneoBlobId(eneoBlobId)
 			.withTitle(title)
 			.withBody(body)
 			.withBaseUrl(baseUrl)
 			.withPath(path)
 			.build();
 
-		var workerSpy = spy(worker);
-		var pageArgumentCaptor = ArgumentCaptor.forClass(Page.class);
+		final var workerSpy = spy(worker);
+		final var pageArgumentCaptor = ArgumentCaptor.forClass(Page.class);
 
 		when(workerSpy.getPageFromConfluence(pageId)).thenReturn(Optional.of(page));
-		when(dbIntegrationMock.getBlobId(pageId, MUNICIPALITY_ID)).thenReturn(Optional.of(intricBlobId));
-		when(intricIntegrationMock.updateInfoBlob(intricGroupId, intricBlobId, title, body, baseUrl.concat(path))).thenReturn(newIntricBlobId);
+		when(dbIntegrationMock.getBlobId(pageId, MUNICIPALITY_ID)).thenReturn(Optional.of(eneoBlobId));
+		when(eneoIntegrationMock.updateInfoBlob(eneoGroupId, eneoBlobId, title, body, baseUrl.concat(path))).thenReturn(newEneoBlobId);
 
 		workerSpy.updatePage(pageId);
 
 		verify(workerSpy).getPageFromConfluence(pageId);
 		verify(dbIntegrationMock).getBlobId(pageId, MUNICIPALITY_ID);
 		verify(dbIntegrationMock).savePage(pageArgumentCaptor.capture());
-		verify(intricIntegrationMock).updateInfoBlob(intricGroupId, intricBlobId, title, body, baseUrl.concat(path));
-		verifyNoMoreInteractions(dbIntegrationMock, intricIntegrationMock);
+		verify(eneoIntegrationMock).updateInfoBlob(eneoGroupId, eneoBlobId, title, body, baseUrl.concat(path));
+		verifyNoMoreInteractions(dbIntegrationMock, eneoIntegrationMock);
 
-		var updatedPage = pageArgumentCaptor.getValue();
-		assertThat(updatedPage.intricBlobId()).isEqualTo(newIntricBlobId);
+		final var updatedPage = pageArgumentCaptor.getValue();
+		assertThat(updatedPage.eneoBlobId()).isEqualTo(newEneoBlobId);
 	}
 
 	@Test
 	void deletePage() {
-		var pageId = "somePageId";
-		var intricBlobId = "someIntricBlobId";
+		final var pageId = "somePageId";
+		final var eneoBlobId = "someEneoBlobId";
 
-		when(dbIntegrationMock.getBlobId(pageId, MUNICIPALITY_ID)).thenReturn(Optional.of(intricBlobId));
+		when(dbIntegrationMock.getBlobId(pageId, MUNICIPALITY_ID)).thenReturn(Optional.of(eneoBlobId));
 
 		worker.deletePage(pageId);
 
 		verify(dbIntegrationMock).getBlobId(pageId, MUNICIPALITY_ID);
 		verify(dbIntegrationMock).deletePage(pageId, MUNICIPALITY_ID);
-		verify(intricIntegrationMock).deleteInfoBlob(intricBlobId);
-		verifyNoMoreInteractions(dbIntegrationMock, intricIntegrationMock);
+		verify(eneoIntegrationMock).deleteInfoBlob(eneoBlobId);
+		verifyNoMoreInteractions(dbIntegrationMock, eneoIntegrationMock);
 	}
 
 	@Test
@@ -370,10 +370,10 @@ class ConfluenceWorkerTests {
 	}
 
 	@Test
-	void getIntricGroupId() {
-		assertThat(worker.getIntricGroupId("somePageId", List.of("1212419", "98381", ROOT_ID))).isEqualTo(INTRIC_GROUP_ID);
-		assertThat(worker.getIntricGroupId(ROOT_ID, List.of())).isEqualTo(INTRIC_GROUP_ID);
-		assertThat(worker.getIntricGroupId("somePageId", List.of("unknownChildId", "unknownParentId", "unknownRootId"))).isNull();
+	void getEneoGroupId() {
+		assertThat(worker.getEneoGroupId("somePageId", List.of("1212419", "98381", ROOT_ID))).isEqualTo(ENEO_GROUP_ID);
+		assertThat(worker.getEneoGroupId(ROOT_ID, List.of())).isEqualTo(ENEO_GROUP_ID);
+		assertThat(worker.getEneoGroupId("somePageId", List.of("unknownChildId", "unknownParentId", "unknownRootId"))).isNull();
 	}
 
 }

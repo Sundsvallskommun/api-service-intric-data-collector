@@ -1,4 +1,4 @@
-# Intric Data Collector
+# ?? Data Collector
 
 ## Status
 
@@ -12,4 +12,3 @@
 ## 
 
 Copyright (c) 2024 Sundsvalls kommun
-

@@ -37,7 +37,7 @@ public class DbIntegration {
 	}
 
 	public void savePage(final Page page) {
-		var pageEntity = pageMapper.toPageEntity(page);
+		final var pageEntity = pageMapper.toPageEntity(page);
 
 		pageRepository.save(pageEntity);
 	}

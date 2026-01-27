@@ -18,10 +18,10 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 import org.zalando.problem.Problem;
-import se.sundsvall.intricdatacollector.core.intric.IntricIntegration;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceClientRegistry;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationProperties;
 import se.sundsvall.intricdatacollector.datasource.confluence.integration.db.DbIntegration;
+import se.sundsvall.intricdatacollector.integration.eneo.EneoIntegration;
 
 @Service
 public class ConfluenceDataSource {
@@ -35,26 +35,26 @@ public class ConfluenceDataSource {
 		final ConfluenceClientRegistry confluenceClientRegistry,
 		final ConfluencePageMapper confluencePageMapper,
 		final DbIntegration dbIntegration,
-		final IntricIntegration intricIntegration,
+		final EneoIntegration eneoIntegration,
 		final PageJsonParser pageJsonParser,
 		final TaskScheduler taskScheduler,
 		final LockProvider lockProvider) {
-		var executor = new DefaultLockingTaskExecutor(lockProvider);
+		final var executor = new DefaultLockingTaskExecutor(lockProvider);
 
 		properties.environments().forEach((municipalityId, environment) -> {
 			// Create a worker for the current environment
-			var worker = new ConfluenceWorker(municipalityId, properties, healthIndicator, confluenceClientRegistry, confluencePageMapper, intricIntegration, dbIntegration, pageJsonParser);
+			final var worker = new ConfluenceWorker(municipalityId, properties, healthIndicator, confluenceClientRegistry, confluencePageMapper, eneoIntegration, dbIntegration, pageJsonParser);
 			// "Cache" the worker
 			workers.put(municipalityId, worker);
 
-			var scheduling = environment.scheduling();
+			final var scheduling = environment.scheduling();
 
 			// Schedule the worker if scheduling is enabled for the current environment
 			if (scheduling.enabled()) {
-				var lockConfiguration = new LockConfiguration(Instant.now(), "confluence-datasource-lock-" + municipalityId, scheduling.lockAtMostFor(), Duration.ZERO);
-				var lockManager = new DefaultLockManager(executor, lockConfigurationExtractor -> Optional.of(lockConfiguration));
-				var cronTrigger = new CronTrigger(scheduling.cronExpression());
-				var lockableTaskScheduler = new LockableTaskScheduler(taskScheduler, lockManager);
+				final var lockConfiguration = new LockConfiguration(Instant.now(), "confluence-datasource-lock-" + municipalityId, scheduling.lockAtMostFor(), Duration.ZERO);
+				final var lockManager = new DefaultLockManager(executor, _ -> Optional.of(lockConfiguration));
+				final var cronTrigger = new CronTrigger(scheduling.cronExpression());
+				final var lockableTaskScheduler = new LockableTaskScheduler(taskScheduler, lockManager);
 
 				lockableTaskScheduler.schedule(worker, cronTrigger);
 

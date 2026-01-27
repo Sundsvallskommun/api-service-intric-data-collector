@@ -33,41 +33,41 @@ class PageEntityTests {
 
 	@Test
 	void gettersAndSetters() {
-		var pageId = "somePageId";
-		var municipalityId = "someMunicipalityId";
-		var intricGroupId = "someIntricGroupId";
-		var intricBlobId = "someIntricBlobId";
+		final var pageId = "somePageId";
+		final var municipalityId = "someMunicipalityId";
+		final var eneoGroupId = "someEneoGroupId";
+		final var eneoBlobId = "someEneoBlobId";
 
-		var pageEntity = new PageEntity();
+		final var pageEntity = new PageEntity();
 		pageEntity.setPageId(pageId);
 		pageEntity.setMunicipalityId(municipalityId);
-		pageEntity.setIntricGroupId(intricGroupId);
-		pageEntity.setIntricBlobId(intricBlobId);
+		pageEntity.setEneoGroupId(eneoGroupId);
+		pageEntity.setEneoBlobId(eneoBlobId);
 
 		assertThat(pageEntity.getPageId()).isEqualTo(pageId);
 		assertThat(pageEntity.getMunicipalityId()).isEqualTo(municipalityId);
-		assertThat(pageEntity.getIntricGroupId()).isEqualTo(intricGroupId);
-		assertThat(pageEntity.getIntricBlobId()).isEqualTo(intricBlobId);
+		assertThat(pageEntity.getEneoGroupId()).isEqualTo(eneoGroupId);
+		assertThat(pageEntity.getEneoBlobId()).isEqualTo(eneoBlobId);
 	}
 
 	@Test
 	void builder() {
-		var pageId = "somePageId";
-		var municipalityId = "someMunicipalityId";
-		var intricGroupId = "someIntricGroupId";
-		var intricBlobId = "someIntricBlobId";
+		final var pageId = "somePageId";
+		final var municipalityId = "someMunicipalityId";
+		final var eneoGroupId = "someEneoGroupId";
+		final var eneoBlobId = "someEneoBlobId";
 
-		var pageEntity = PageEntityBuilder.create()
+		final var pageEntity = PageEntityBuilder.create()
 			.withPageId(pageId)
 			.withMunicipalityId(municipalityId)
-			.withIntricGroupId(intricGroupId)
-			.withIntricBlobId(intricBlobId)
+			.withEneoGroupId(eneoGroupId)
+			.withEneoBlobId(eneoBlobId)
 			.build();
 
 		assertThat(pageEntity.getPageId()).isEqualTo(pageId);
 		assertThat(pageEntity.getMunicipalityId()).isEqualTo(municipalityId);
-		assertThat(pageEntity.getIntricGroupId()).isEqualTo(intricGroupId);
-		assertThat(pageEntity.getIntricBlobId()).isEqualTo(intricBlobId);
+		assertThat(pageEntity.getEneoGroupId()).isEqualTo(eneoGroupId);
+		assertThat(pageEntity.getEneoBlobId()).isEqualTo(eneoBlobId);
 	}
 
 	@Test

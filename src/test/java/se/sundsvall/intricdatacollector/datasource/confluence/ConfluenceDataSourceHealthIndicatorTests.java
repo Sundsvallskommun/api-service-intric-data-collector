@@ -24,6 +24,15 @@ class ConfluenceDataSourceHealthIndicatorTests {
 
 	private final ConfluenceDataSourceHealthIndicator healthIndicator = new ConfluenceDataSourceHealthIndicator();
 
+	static Stream<Arguments> argumentsForIsHealthy() {
+		return Stream.of(
+			Arguments.of(UP, true),
+			Arguments.of(DOWN, false),
+			Arguments.of(OUT_OF_SERVICE, false),
+			Arguments.of(UNKNOWN, false),
+			Arguments.of(RESTRICTED, false));
+	}
+
 	@Test
 	void healthIsCreatedWithStatusUpWhenHealthIndicatorIsCreated() {
 		assertThat(healthIndicator.health()).isNotNull();
@@ -33,21 +42,12 @@ class ConfluenceDataSourceHealthIndicatorTests {
 	@ParameterizedTest
 	@MethodSource("argumentsForIsHealthy")
 	void isHealthy(final Status status, final boolean expectedResult) {
-		var healthMock = mock(Health.class);
+		final var healthMock = mock(Health.class);
 		when(healthMock.getStatus()).thenReturn(status);
-		var healthIndicatorSpy = spy(healthIndicator);
+		final var healthIndicatorSpy = spy(healthIndicator);
 		when(healthIndicatorSpy.health()).thenReturn(healthMock);
 
 		assertThat(healthIndicatorSpy.isHealthy()).isEqualTo(expectedResult);
-	}
-
-	static Stream<Arguments> argumentsForIsHealthy() {
-		return Stream.of(
-			Arguments.of(UP, true),
-			Arguments.of(DOWN, false),
-			Arguments.of(OUT_OF_SERVICE, false),
-			Arguments.of(UNKNOWN, false),
-			Arguments.of(RESTRICTED, false));
 	}
 
 	@Test
@@ -77,7 +77,7 @@ class ConfluenceDataSourceHealthIndicatorTests {
 
 	@Test
 	void setUnhealthyWithDetail() {
-		var detail = "someDetail";
+		final var detail = "someDetail";
 
 		healthIndicator.setUnhealthy(detail);
 

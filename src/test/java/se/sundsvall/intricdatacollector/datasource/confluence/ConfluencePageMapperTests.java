@@ -25,10 +25,10 @@ class ConfluencePageMapperTests {
 
 	@Test
 	void newPage() {
-		var pageId = "somePageId";
-		var municipalityId = "someMunicipalityId";
+		final var pageId = "somePageId";
+		final var municipalityId = "someMunicipalityId";
 
-		var page = pageMapper.newPage(municipalityId, pageId);
+		final var page = pageMapper.newPage(municipalityId, pageId);
 
 		assertThat(page).hasAllNullFieldsOrPropertiesExcept("municipalityId", "pageId");
 		assertThat(page.municipalityId()).isEqualTo(municipalityId);
@@ -37,15 +37,15 @@ class ConfluencePageMapperTests {
 
 	@Test
 	void toPage() {
-		var json = "someJson";
-		var pageId = "somePageId";
-		var municipalityId = "someMunicipalityId";
-		var title = "someTitle";
-		var body = "someBody";
-		var baseUrl = "someBaseUrl";
-		var path = "somePath";
-		var updatedAt = OffsetDateTime.now().minusDays(4);
-		var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
+		final var json = "someJson";
+		final var pageId = "somePageId";
+		final var municipalityId = "someMunicipalityId";
+		final var title = "someTitle";
+		final var body = "someBody";
+		final var baseUrl = "someBaseUrl";
+		final var path = "somePath";
+		final var updatedAt = OffsetDateTime.now().minusDays(4);
+		final var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
 
 		when(pageJsonParserMock.parse(json)).thenReturn(pageJsonMock);
 		when(pageJsonMock.getTitle()).thenReturn(title);
@@ -77,14 +77,14 @@ class ConfluencePageMapperTests {
 
 	@Test
 	void toPageWhenUpdatedAtIsMissing() {
-		var json = "someJson";
-		var pageId = "somePageId";
-		var municipalityId = "someMunicipalityId";
+		final var json = "someJson";
+		final var pageId = "somePageId";
+		final var municipalityId = "someMunicipalityId";
 
 		when(pageJsonParserMock.parse(json)).thenReturn(pageJsonMock);
 		when(pageJsonMock.getUpdatedAt()).thenReturn(null);
 
-		var page = pageMapper.toPage(municipalityId, pageId, json);
+		final var page = pageMapper.toPage(municipalityId, pageId, json);
 
 		assertThat(page.updatedAt()).isNull();
 	}

@@ -45,7 +45,7 @@ class ConfluenceWebhookResources {
 	ResponseEntity<Void> handleWebhookEvent(@PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId,
 		@RequestBody @Valid final ConfluenceWebhookData request) {
 		// Manually check if webhooks are enabled for the given municipality
-		boolean webhookEnabled = ofNullable(properties.environments().get(municipalityId))
+		final boolean webhookEnabled = ofNullable(properties.environments().get(municipalityId))
 			.map(ConfluenceIntegrationProperties.Environment::webhook)
 			.map(ConfluenceIntegrationProperties.Environment.Webhook::enabled)
 			.orElse(false);
@@ -53,8 +53,8 @@ class ConfluenceWebhookResources {
 			throw Problem.valueOf(FORBIDDEN, "Webhooks are disabled for the requested municipality id");
 		}
 
-		var eventType = EventType.fromString(request.eventType());
-		var pageId = request.page().id().toString();
+		final var eventType = EventType.fromString(request.eventType());
+		final var pageId = request.page().id().toString();
 
 		switch (eventType) {
 			case PAGE_CREATED, PAGE_RESTORED -> dataSource.insertPage(municipalityId, pageId);

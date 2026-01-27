@@ -34,9 +34,10 @@ public record ConfluenceIntegrationProperties(Map<String, Environment> environme
 		@DefaultValue("20") int readTimeoutInSeconds) {
 
 		public record Mapping(
-			@NotBlank String intricGroupId,
+			@NotBlank String eneoGroupId,
 
-			@NotBlank String rootId) {}
+			@NotBlank String rootId) {
+		}
 
 		public record Scheduling(
 
@@ -44,11 +45,13 @@ public record ConfluenceIntegrationProperties(Map<String, Environment> environme
 
 			@NotBlank String cronExpression,
 
-			@DefaultValue("PT2M") Duration lockAtMostFor) {}
+			@DefaultValue("PT2M") Duration lockAtMostFor) {
+		}
 
 		public record Webhook(boolean enabled, WebhookSecurity security) {
 
-			public record WebhookSecurity(String secret, boolean enabled) {}
+			public record WebhookSecurity(String secret, boolean enabled) {
+			}
 		}
 
 		public record BasicAuthentication(

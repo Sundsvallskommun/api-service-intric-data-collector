@@ -20,22 +20,22 @@ public class PageEntity {
 	@Column(name = "municipality_id", length = 4)
 	private String municipalityId;
 
-	@Column(name = "intric_group_id", length = 36)
-	private String intricGroupId;
+	@Column(name = "eneo_group_id", length = 36)
+	private String eneoGroupId;
 
 	@Column(name = "blob_id", length = 36)
-	private String intricBlobId;
+	private String eneoBlobId;
 
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
 	public PageEntity() {}
 
-	PageEntity(final String pageId, final String municipalityId, final String intricGroupId, final String intricBlobId, final LocalDateTime updatedAt) {
+	PageEntity(final String pageId, final String municipalityId, final String eneoGroupId, final String eneoBlobId, final LocalDateTime updatedAt) {
 		this.pageId = pageId;
 		this.municipalityId = municipalityId;
-		this.intricGroupId = intricGroupId;
-		this.intricBlobId = intricBlobId;
+		this.eneoGroupId = eneoGroupId;
+		this.eneoBlobId = eneoBlobId;
 		this.updatedAt = updatedAt;
 	}
 
@@ -55,20 +55,20 @@ public class PageEntity {
 		this.municipalityId = municipalityId;
 	}
 
-	public String getIntricGroupId() {
-		return intricGroupId;
+	public String getEneoGroupId() {
+		return eneoGroupId;
 	}
 
-	public void setIntricGroupId(final String intricGroupId) {
-		this.intricGroupId = intricGroupId;
+	public void setEneoGroupId(final String eneoGroupId) {
+		this.eneoGroupId = eneoGroupId;
 	}
 
-	public String getIntricBlobId() {
-		return intricBlobId;
+	public String getEneoBlobId() {
+		return eneoBlobId;
 	}
 
-	public void setIntricBlobId(final String intricBlobId) {
-		this.intricBlobId = intricBlobId;
+	public void setEneoBlobId(final String eneoBlobId) {
+		this.eneoBlobId = eneoBlobId;
 	}
 
 	public LocalDateTime getUpdatedAt() {
@@ -84,18 +84,18 @@ public class PageEntity {
 		if (this == o) {
 			return true;
 		}
-		if (!(o instanceof PageEntity that)) {
+		if (!(o instanceof final PageEntity that)) {
 			return false;
 		}
 		return Objects.equals(pageId, that.pageId) &&
 			Objects.equals(municipalityId, that.municipalityId) &&
-			Objects.equals(intricGroupId, that.intricGroupId) &&
-			Objects.equals(intricBlobId, that.intricBlobId) &&
+			Objects.equals(eneoGroupId, that.eneoGroupId) &&
+			Objects.equals(eneoBlobId, that.eneoBlobId) &&
 			Objects.equals(updatedAt, that.updatedAt);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(pageId, municipalityId, intricGroupId, intricBlobId, updatedAt);
+		return Objects.hash(pageId, municipalityId, eneoGroupId, eneoBlobId, updatedAt);
 	}
 }
