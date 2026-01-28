@@ -16,7 +16,6 @@ import se.sundsvall.aidatacollector.datasource.confluence.integration.confluence
 import se.sundsvall.aidatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationProperties;
 import se.sundsvall.aidatacollector.datasource.confluence.integration.db.DbIntegration;
 import se.sundsvall.aidatacollector.datasource.confluence.model.Page;
-import se.sundsvall.aidatacollector.datasource.confluence.model.PageBuilder;
 import se.sundsvall.aidatacollector.integration.eneo.EneoIntegration;
 import se.sundsvall.dept44.requestid.RequestId;
 
@@ -132,9 +131,9 @@ class ConfluenceWorker implements Runnable {
 			// If no updated-at timestamp is set - insert the page
 			// If the updated-at timestamp of the Confluence page is after the locally stored one - update
 			// Otherwise - ignore
-			if (page.updatedAt() == null) {
+			if (page.getUpdatedAt() == null) {
 				insertPage(pageId);
-			} else if (updatedAtInConfluence.isAfter(page.updatedAt())) {
+			} else if (updatedAtInConfluence.isAfter(page.getUpdatedAt())) {
 				updatePage(pageId);
 			} else {
 				LOG.info("Not updating current page {} (municipalityId: {})", pageId, municipalityId);
@@ -153,14 +152,14 @@ class ConfluenceWorker implements Runnable {
 			final var page = pageMapper.toPage(municipalityId, pageId, json);
 
 			// Skip any blacklisted pages
-			if (isBlacklisted(page.pageId(), page.ancestorIds())) {
+			if (isBlacklisted(page.getPageId(), page.getAncestorIds())) {
 				LOG.info("Unable to process the page {} as it is blacklisted or has a blacklisted ancestor (municipalityId: {})", pageId, municipalityId);
 
 				return null;
 			}
 
 			// Get the Eneo group id by traversing up the page tree
-			final var eneoGroupId = getEneoGroupId(pageId, page.ancestorIds());
+			final var eneoGroupId = getEneoGroupId(pageId, page.getAncestorIds());
 			// If we don't have an Eneo group id, we can't really do anything more - bail out
 			if (isNotBlank(eneoGroupId)) {
 				LOG.info("The page {} was matched with the Eneo group id {} (municipalityId: {})", pageId, eneoGroupId, municipalityId);
@@ -170,9 +169,8 @@ class ConfluenceWorker implements Runnable {
 				return null;
 			}
 
-			return PageBuilder.from(page)
-				.withEneoGroupId(eneoGroupId)
-				.build();
+			return page
+				.withEneoGroupId(eneoGroupId);
 		});
 	}
 
@@ -180,10 +178,10 @@ class ConfluenceWorker implements Runnable {
 		// Get the page
 		getPageFromConfluence(pageId).ifPresentOrElse(page -> {
 			// Add an info blob to Eneo
-			final var blobId = eneoIntegration.addInfoBlob(municipalityId, page.eneoGroupId(), page.title(), page.bodyAsText(), page.url());
+			final var blobId = eneoIntegration.addInfoBlob(municipalityId, page.getEneoGroupId(), page.getTitle(), page.bodyAsText(), page.url());
 
 			// Save the page
-			dbIntegration.savePage(PageBuilder.from(page).withEneoBlobId(blobId).build());
+			dbIntegration.savePage(page.withEneoBlobId(blobId));
 
 			LOG.info("The page {} has been inserted (municipalityId: {})", pageId, municipalityId);
 		}, () -> LOG.info("Unable to insert the page {} since it couldn't be found in Confluence (municipalityId: {})", pageId, municipalityId));
@@ -193,9 +191,9 @@ class ConfluenceWorker implements Runnable {
 		// Get the page
 		getPageFromConfluence(pageId).ifPresentOrElse(page -> dbIntegration.getBlobId(pageId, municipalityId).ifPresentOrElse(blobId -> {
 			// Update the info blob in Eneo
-			final var newBlobId = eneoIntegration.updateInfoBlob(municipalityId, page.eneoGroupId(), blobId, page.title(), page.bodyAsText(), page.url());
+			final var newBlobId = eneoIntegration.updateInfoBlob(municipalityId, page.getEneoGroupId(), blobId, page.getTitle(), page.bodyAsText(), page.url());
 			// Save (update) the page
-			dbIntegration.savePage(PageBuilder.from(page).withEneoBlobId(newBlobId).build());
+			dbIntegration.savePage(page.withEneoBlobId(newBlobId));
 
 			LOG.info("The page {} has been updated (municipalityId: {})", pageId, municipalityId);
 		}, () -> LOG.info("Unable to update the page {} since no Eneo blob id could be found (municipalityId: {})", pageId, municipalityId)),

@@ -15,8 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.aidatacollector.datasource.confluence.integration.db.model.PageEntity;
-import se.sundsvall.aidatacollector.datasource.confluence.integration.db.model.PageEntityBuilder;
-import se.sundsvall.aidatacollector.datasource.confluence.model.PageBuilder;
+import se.sundsvall.aidatacollector.datasource.confluence.model.Page;
 
 @ExtendWith(MockitoExtension.class)
 class DbIntegrationTests {
@@ -47,13 +46,12 @@ class DbIntegrationTests {
 
 	@Test
 	void getPage() {
-		final var pageEntity = PageEntityBuilder.create()
+		final var pageEntity = PageEntity.create()
 			.withPageId(PAGE_ID)
 			.withMunicipalityId(MUNICIPALITY_ID)
 			.withEneoGroupId(ENEO_GROUP_ID)
 			.withEneoBlobId(ENEO_BLOB_ID)
-			.withUpdatedAt(UPDATED_AT)
-			.build();
+			.withUpdatedAt(UPDATED_AT);
 
 		when(pageRepositoryMock.findPageEntityByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID)).thenReturn(of(pageEntity));
 		when(pageMapperMock.toPage(pageEntity)).thenCallRealMethod();
@@ -61,11 +59,11 @@ class DbIntegrationTests {
 		final var page = dbIntegration.getPage(PAGE_ID, MUNICIPALITY_ID);
 
 		assertThat(page).isNotEmpty().hasValueSatisfying(actualPage -> {
-			assertThat(actualPage.pageId()).isEqualTo(PAGE_ID);
-			assertThat(actualPage.municipalityId()).isEqualTo(MUNICIPALITY_ID);
-			assertThat(actualPage.eneoGroupId()).isEqualTo(ENEO_GROUP_ID);
-			assertThat(actualPage.eneoBlobId()).isEqualTo(ENEO_BLOB_ID);
-			assertThat(actualPage.updatedAt()).isEqualTo(UPDATED_AT);
+			assertThat(actualPage.getPageId()).isEqualTo(PAGE_ID);
+			assertThat(actualPage.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
+			assertThat(actualPage.getEneoGroupId()).isEqualTo(ENEO_GROUP_ID);
+			assertThat(actualPage.getEneoBlobId()).isEqualTo(ENEO_BLOB_ID);
+			assertThat(actualPage.getUpdatedAt()).isEqualTo(UPDATED_AT);
 		});
 
 		verify(pageRepositoryMock).findPageEntityByPageIdAndMunicipalityId(PAGE_ID, MUNICIPALITY_ID);
@@ -77,13 +75,12 @@ class DbIntegrationTests {
 	void savePage() {
 		final var pageEntityCaptor = ArgumentCaptor.forClass(PageEntity.class);
 
-		final var page = PageBuilder.create()
+		final var page = Page.create()
 			.withPageId(PAGE_ID)
 			.withMunicipalityId(MUNICIPALITY_ID)
 			.withEneoGroupId(ENEO_GROUP_ID)
 			.withEneoBlobId(ENEO_BLOB_ID)
-			.withUpdatedAt(UPDATED_AT)
-			.build();
+			.withUpdatedAt(UPDATED_AT);
 
 		when(pageMapperMock.toPageEntity(page)).thenCallRealMethod();
 

@@ -37,42 +37,64 @@ class PageEntityTests {
 		final var municipalityId = "someMunicipalityId";
 		final var eneoGroupId = "someEneoGroupId";
 		final var eneoBlobId = "someEneoBlobId";
+		final var updatedAt = LocalDateTime.now();
 
 		final var pageEntity = new PageEntity();
 		pageEntity.setPageId(pageId);
 		pageEntity.setMunicipalityId(municipalityId);
 		pageEntity.setEneoGroupId(eneoGroupId);
 		pageEntity.setEneoBlobId(eneoBlobId);
+		pageEntity.setUpdatedAt(updatedAt);
 
 		assertThat(pageEntity.getPageId()).isEqualTo(pageId);
 		assertThat(pageEntity.getMunicipalityId()).isEqualTo(municipalityId);
 		assertThat(pageEntity.getEneoGroupId()).isEqualTo(eneoGroupId);
 		assertThat(pageEntity.getEneoBlobId()).isEqualTo(eneoBlobId);
+		assertThat(pageEntity.getUpdatedAt()).isEqualTo(updatedAt);
 	}
 
 	@Test
-	void builder() {
+	void withMethods() {
 		final var pageId = "somePageId";
 		final var municipalityId = "someMunicipalityId";
 		final var eneoGroupId = "someEneoGroupId";
 		final var eneoBlobId = "someEneoBlobId";
+		final var updatedAt = LocalDateTime.now();
 
-		final var pageEntity = PageEntityBuilder.create()
+		final var pageEntity = PageEntity.create()
 			.withPageId(pageId)
 			.withMunicipalityId(municipalityId)
 			.withEneoGroupId(eneoGroupId)
 			.withEneoBlobId(eneoBlobId)
-			.build();
+			.withUpdatedAt(updatedAt);
 
 		assertThat(pageEntity.getPageId()).isEqualTo(pageId);
 		assertThat(pageEntity.getMunicipalityId()).isEqualTo(municipalityId);
 		assertThat(pageEntity.getEneoGroupId()).isEqualTo(eneoGroupId);
 		assertThat(pageEntity.getEneoBlobId()).isEqualTo(eneoBlobId);
+		assertThat(pageEntity.getUpdatedAt()).isEqualTo(updatedAt);
 	}
 
 	@Test
 	void noDirtOnCreatedBean() {
 		assertThat(new PageEntity()).hasAllNullFieldsOrProperties();
-		assertThat(PageEntityBuilder.create().build()).hasAllNullFieldsOrProperties();
+		assertThat(PageEntity.create()).hasAllNullFieldsOrProperties();
+	}
+
+	@Test
+	void allArgsConstructor() {
+		final var pageId = "somePageId";
+		final var municipalityId = "someMunicipalityId";
+		final var eneoGroupId = "someEneoGroupId";
+		final var eneoBlobId = "someEneoBlobId";
+		final var updatedAt = LocalDateTime.now();
+
+		final var pageEntity = new PageEntity(pageId, municipalityId, eneoGroupId, eneoBlobId, updatedAt);
+
+		assertThat(pageEntity.getPageId()).isEqualTo(pageId);
+		assertThat(pageEntity.getMunicipalityId()).isEqualTo(municipalityId);
+		assertThat(pageEntity.getEneoGroupId()).isEqualTo(eneoGroupId);
+		assertThat(pageEntity.getEneoBlobId()).isEqualTo(eneoBlobId);
+		assertThat(pageEntity.getUpdatedAt()).isEqualTo(updatedAt);
 	}
 }

@@ -6,11 +6,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import org.jilt.Builder;
 
 @Entity
 @Table(name = "confluence_pages")
-@Builder(setterPrefix = "with", factoryMethod = "create", toBuilder = "from")
 public class PageEntity {
 
 	@Id
@@ -39,12 +37,21 @@ public class PageEntity {
 		this.updatedAt = updatedAt;
 	}
 
+	public static PageEntity create() {
+		return new PageEntity();
+	}
+
 	public String getPageId() {
 		return pageId;
 	}
 
 	public void setPageId(final String pageId) {
 		this.pageId = pageId;
+	}
+
+	public PageEntity withPageId(final String pageId) {
+		this.pageId = pageId;
+		return this;
 	}
 
 	public String getMunicipalityId() {
@@ -55,12 +62,22 @@ public class PageEntity {
 		this.municipalityId = municipalityId;
 	}
 
+	public PageEntity withMunicipalityId(final String municipalityId) {
+		this.municipalityId = municipalityId;
+		return this;
+	}
+
 	public String getEneoGroupId() {
 		return eneoGroupId;
 	}
 
 	public void setEneoGroupId(final String eneoGroupId) {
 		this.eneoGroupId = eneoGroupId;
+	}
+
+	public PageEntity withEneoGroupId(final String eneoGroupId) {
+		this.eneoGroupId = eneoGroupId;
+		return this;
 	}
 
 	public String getEneoBlobId() {
@@ -71,12 +88,22 @@ public class PageEntity {
 		this.eneoBlobId = eneoBlobId;
 	}
 
+	public PageEntity withEneoBlobId(final String eneoBlobId) {
+		this.eneoBlobId = eneoBlobId;
+		return this;
+	}
+
 	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
 	}
 
 	public void setUpdatedAt(final LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public PageEntity withUpdatedAt(final LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+		return this;
 	}
 
 	@Override

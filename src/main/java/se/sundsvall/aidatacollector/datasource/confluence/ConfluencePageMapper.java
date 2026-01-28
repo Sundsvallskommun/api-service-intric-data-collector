@@ -5,7 +5,6 @@ import static java.util.Optional.ofNullable;
 import java.time.OffsetDateTime;
 import org.springframework.stereotype.Component;
 import se.sundsvall.aidatacollector.datasource.confluence.model.Page;
-import se.sundsvall.aidatacollector.datasource.confluence.model.PageBuilder;
 
 @Component
 class ConfluencePageMapper {
@@ -17,16 +16,15 @@ class ConfluencePageMapper {
 	}
 
 	Page newPage(final String municipalityId, final String pageId) {
-		return PageBuilder.create()
+		return Page.create()
 			.withPageId(pageId)
-			.withMunicipalityId(municipalityId)
-			.build();
+			.withMunicipalityId(municipalityId);
 	}
 
 	Page toPage(final String municipalityId, final String pageId, final String json) {
 		final var pageJson = pageJsonParser.parse(json);
 
-		return PageBuilder.create()
+		return Page.create()
 			.withMunicipalityId(municipalityId)
 			.withPageId(pageId)
 			.withTitle(pageJson.getTitle())
@@ -37,7 +35,6 @@ class ConfluencePageMapper {
 				.map(OffsetDateTime::parse)
 				.map(OffsetDateTime::toLocalDateTime)
 				.orElse(null))
-			.withAncestorIds(pageJson.getAncestorIds())
-			.build();
+			.withAncestorIds(pageJson.getAncestorIds());
 	}
 }

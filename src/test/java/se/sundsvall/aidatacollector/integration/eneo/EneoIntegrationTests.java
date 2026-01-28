@@ -9,19 +9,20 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 
+import generated.se.sundsvall.eneo.InfoBlobAddPublic;
+import generated.se.sundsvall.eneo.InfoBlobMetadataUpsertPublic;
+import generated.se.sundsvall.eneo.InfoBlobPublic;
+import generated.se.sundsvall.eneo.InfoBlobUpsertRequest;
+import generated.se.sundsvall.eneo.PaginatedResponseInfoBlobPublic;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.zalando.problem.ThrowableProblem;
-import se.sundsvall.aidatacollector.integration.eneo.model.InfoBlobBuilder;
-import se.sundsvall.aidatacollector.integration.eneo.model.InfoBlobsRequest;
-import se.sundsvall.aidatacollector.integration.eneo.model.InfoBlobsRequestBuilder;
-import se.sundsvall.aidatacollector.integration.eneo.model.InfoBlobsResponse;
-import se.sundsvall.aidatacollector.integration.eneo.model.MetadataBuilder;
 
 @ExtendWith(MockitoExtension.class)
 class EneoIntegrationTests {
@@ -44,24 +45,22 @@ class EneoIntegrationTests {
 		final var title = "someTitle";
 		final var body = "someBody";
 		final var url = "someUrl";
-		final var itemId = "someItemId";
+		final var itemId = UUID.randomUUID();
 
-		final var request = InfoBlobsRequestBuilder.create()
-			.withInfoBlobs(List.of(InfoBlobBuilder.create()
-				.withText(body)
-				.withMetadata(MetadataBuilder.create()
-					.withTitle(title)
-					.withUrl(url)
-					.build())
-				.build()))
-			.build();
+		final var request = new InfoBlobUpsertRequest()
+			.infoBlobs(List.of(new InfoBlobAddPublic()
+				.text(body)
+				.metadata(new InfoBlobMetadataUpsertPublic()
+					.title(title)
+					.url(url))));
 
-		when(clientMock.addInfoBlobs(groupId, request)).thenReturn(new InfoBlobsResponse(
-			List.of(new InfoBlobsResponse.Item(itemId, null, null, null, null, null, null)), 1));
+		when(clientMock.addInfoBlobs(groupId, request)).thenReturn(new PaginatedResponseInfoBlobPublic()
+			.items(List.of(new InfoBlobPublic().id(itemId)))
+			.count(1));
 
 		final var response = eneoIntegration.addInfoBlob(MUNICIPALITY_ID, groupId, title, body, url);
 
-		assertThat(response).isEqualTo(itemId);
+		assertThat(response).isEqualTo(itemId.toString());
 
 		verify(clientMock).addInfoBlobs(groupId, request);
 		verifyNoMoreInteractions(clientMock);
@@ -73,17 +72,18 @@ class EneoIntegrationTests {
 		final var title = "someTitle";
 		final var body = "someBody";
 		final var url = "someUrl";
-		final var itemId = "someItemId";
+		final var itemId = UUID.randomUUID();
 		final var blobId = "someBlobId";
 
-		when(clientMock.addInfoBlobs(eq(groupId), any(InfoBlobsRequest.class))).thenReturn(new InfoBlobsResponse(
-			List.of(new InfoBlobsResponse.Item(itemId, null, null, null, null, null, null)), 1));
+		when(clientMock.addInfoBlobs(eq(groupId), any(InfoBlobUpsertRequest.class))).thenReturn(new PaginatedResponseInfoBlobPublic()
+			.items(List.of(new InfoBlobPublic().id(itemId)))
+			.count(1));
 
 		final var response = eneoIntegration.updateInfoBlob(MUNICIPALITY_ID, groupId, blobId, title, body, url);
 
-		assertThat(response).isEqualTo(itemId);
+		assertThat(response).isEqualTo(itemId.toString());
 
-		verify(clientMock).addInfoBlobs(eq(groupId), any(InfoBlobsRequest.class));
+		verify(clientMock).addInfoBlobs(eq(groupId), any(InfoBlobUpsertRequest.class));
 		verify(clientMock).deleteInfoBlob(blobId);
 		verifyNoMoreInteractions(clientMock);
 	}

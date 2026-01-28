@@ -13,7 +13,6 @@
 	<properties>
 		<shedlock.version>7.5.0</shedlock.version>
 		<jsoup.version>1.22.1</jsoup.version>
-		<jilt.version>1.9.1</jilt.version>
 		<auth0.java-jwt.version>4.5.0</auth0.java-jwt.version>
 		<commons-codec.version>1.20.0</commons-codec.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
@@ -89,25 +88,47 @@
 			<artifactId>jsoup</artifactId>
 			<version>${jsoup.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>cc.jilt</groupId>
-			<artifactId>jilt</artifactId>
-			<version>${jilt.version}</version>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<configuration>
-					<compilerArgs>
-						<arg>-Xlint:deprecation</arg>
-						<arg>-Xlint:-options</arg>
-						<arg>-Xlint:unchecked</arg>
-					</compilerArgs>
+					<output>${generated-sources-path}</output>
+					<generatorName>spring</generatorName>
+					<generateApis>false</generateApis>
+					<generateSupportingFiles>false</generateSupportingFiles>
+					<configOptions>
+						<sourceFolder>${generated-sources-java-path}</sourceFolder>
+						<generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
+						<generatePom>false</generatePom>
+						<library>spring-boot</library>
+						<dateLibrary>java8</dateLibrary>
+						<apiPackage>generated</apiPackage>
+						<openApiNullable>false</openApiNullable>
+						<useSwaggerUi>false</useSwaggerUi>
+						<useBeanValidation>true</useBeanValidation>
+						<useSwaggerAnnotations>true</useSwaggerAnnotations>
+						<hideGenerationTimestamp>true</hideGenerationTimestamp>
+						<interfaceOnly>true</interfaceOnly>
+						<useSpringBoot3>true</useSpringBoot3>
+					</configOptions>
 				</configuration>
+				<executions>
+					<execution>
+						<id>eneo</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/integrations/eneo.yaml</inputSpec>
+							<configOptions>
+								<modelPackage>generated.se.sundsvall.eneo</modelPackage>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -139,6 +160,8 @@
 						<exclude>**/aidatacollector/integration/eneo/EneoIntegrationConfiguration*</exclude>
 						<!-- BodyCachingServletInputStream has unreachable IOException catch block (ByteArrayInputStream.available() never throws) -->
 						<exclude>**/WebhookSignatureVerificationConfiguration$*BodyCachingServletInputStream*</exclude>
+						<!-- Generated code -->
+						<exclude>**/generated/**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

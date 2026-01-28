@@ -2,13 +2,13 @@ package se.sundsvall.aidatacollector.integration.eneo;
 
 import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 
+import generated.se.sundsvall.eneo.InfoBlobAddPublic;
+import generated.se.sundsvall.eneo.InfoBlobMetadataUpsertPublic;
+import generated.se.sundsvall.eneo.InfoBlobUpsertRequest;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.zalando.problem.Problem;
-import se.sundsvall.aidatacollector.integration.eneo.model.InfoBlobBuilder;
-import se.sundsvall.aidatacollector.integration.eneo.model.InfoBlobsRequestBuilder;
-import se.sundsvall.aidatacollector.integration.eneo.model.MetadataBuilder;
 
 @Service
 public class EneoIntegration {
@@ -20,20 +20,17 @@ public class EneoIntegration {
 	}
 
 	public String addInfoBlob(final String municipalityId, final String groupId, final String title, final String body, final String url) {
-		final var request = InfoBlobsRequestBuilder.create()
-			.withInfoBlobs(List.of(
-				InfoBlobBuilder.create()
-					.withMetadata(MetadataBuilder.create()
-						.withTitle(title)
-						.withUrl(url)
-						.build())
-					.withText(body)
-					.build()))
-			.build();
+		final var request = new InfoBlobUpsertRequest()
+			.infoBlobs(List.of(
+				new InfoBlobAddPublic()
+					.metadata(new InfoBlobMetadataUpsertPublic()
+						.title(title)
+						.url(url))
+					.text(body)));
 
 		final var response = getClient(municipalityId).addInfoBlobs(groupId, request);
 
-		return response.items().getFirst().id();
+		return response.getItems().getFirst().getId().toString();
 	}
 
 	public String updateInfoBlob(final String municipalityId, final String groupId, final String blobId, final String title, final String body, final String url) {

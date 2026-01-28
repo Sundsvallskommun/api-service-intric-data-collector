@@ -29,8 +29,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import se.sundsvall.aidatacollector.Application;
 import se.sundsvall.aidatacollector.datasource.confluence.ConfluenceDataSource;
 import se.sundsvall.aidatacollector.datasource.confluence.api.model.ConfluenceWebhookData;
-import se.sundsvall.aidatacollector.datasource.confluence.api.model.ConfluenceWebhookDataBuilder;
-import se.sundsvall.aidatacollector.datasource.confluence.api.model.PageBuilder;
 import se.sundsvall.aidatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationProperties;
 import se.sundsvall.aidatacollector.datasource.confluence.model.EventType;
 import se.sundsvall.aidatacollector.test.annotation.UnitTest;
@@ -109,15 +107,12 @@ class ConfluenceWebhookResourcesTests {
 	}
 
 	private ConfluenceWebhookData createRequest(final EventType eventType, final Long pageId) {
-		return ConfluenceWebhookDataBuilder.create()
-			.withEventType(eventType.name().toLowerCase())
-			.withPage(PageBuilder.create()
-				.withId(pageId)
-				.build())
-			.withUserKey("4028a083917e668c01917e66f5a80000")
-			.withTimestamp(1724928764451L)
-			.withUpdateTrigger(eventType == PAGE_UPDATED ? "page_updated" : null)
-			.build();
+		return new ConfluenceWebhookData(
+			eventType.name().toLowerCase(),
+			new ConfluenceWebhookData.Page(pageId),
+			"4028a083917e668c01917e66f5a80000",
+			1724928764451L,
+			eventType == PAGE_UPDATED ? "page_updated" : null);
 	}
 
 	private String createHmacSignature(final ConfluenceWebhookData request) {

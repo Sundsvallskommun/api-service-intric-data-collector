@@ -8,8 +8,8 @@ import static se.sundsvall.aidatacollector.datasource.confluence.integration.db.
 import static se.sundsvall.aidatacollector.datasource.confluence.integration.db.DbIntegrationTests.UPDATED_AT;
 
 import org.junit.jupiter.api.Test;
-import se.sundsvall.aidatacollector.datasource.confluence.integration.db.model.PageEntityBuilder;
-import se.sundsvall.aidatacollector.datasource.confluence.model.PageBuilder;
+import se.sundsvall.aidatacollector.datasource.confluence.integration.db.model.PageEntity;
+import se.sundsvall.aidatacollector.datasource.confluence.model.Page;
 
 class PageMapperTests {
 
@@ -17,32 +17,30 @@ class PageMapperTests {
 
 	@Test
 	void toPage() {
-		final var pageEntity = PageEntityBuilder.create()
+		final var pageEntity = PageEntity.create()
 			.withPageId(PAGE_ID)
 			.withMunicipalityId(MUNICIPALITY_ID)
 			.withEneoGroupId(ENEO_GROUP_ID)
 			.withEneoBlobId(ENEO_BLOB_ID)
-			.withUpdatedAt(UPDATED_AT)
-			.build();
+			.withUpdatedAt(UPDATED_AT);
 
 		assertThat(mapper.toPage(pageEntity)).satisfies(page -> {
-			assertThat(page.pageId()).isEqualTo(PAGE_ID);
-			assertThat(page.municipalityId()).isEqualTo(MUNICIPALITY_ID);
-			assertThat(page.eneoGroupId()).isEqualTo(ENEO_GROUP_ID);
-			assertThat(page.eneoBlobId()).isEqualTo(ENEO_BLOB_ID);
-			assertThat(page.updatedAt()).isEqualTo(UPDATED_AT);
+			assertThat(page.getPageId()).isEqualTo(PAGE_ID);
+			assertThat(page.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
+			assertThat(page.getEneoGroupId()).isEqualTo(ENEO_GROUP_ID);
+			assertThat(page.getEneoBlobId()).isEqualTo(ENEO_BLOB_ID);
+			assertThat(page.getUpdatedAt()).isEqualTo(UPDATED_AT);
 		});
 	}
 
 	@Test
 	void toPageEntity() {
-		final var page = PageBuilder.create()
+		final var page = Page.create()
 			.withPageId(PAGE_ID)
 			.withMunicipalityId(MUNICIPALITY_ID)
 			.withEneoGroupId(ENEO_GROUP_ID)
 			.withEneoBlobId(ENEO_BLOB_ID)
-			.withUpdatedAt(UPDATED_AT)
-			.build();
+			.withUpdatedAt(UPDATED_AT);
 
 		assertThat(mapper.toPageEntity(page)).satisfies(pageEntity -> {
 			assertThat(pageEntity.getPageId()).isEqualTo(PAGE_ID);
