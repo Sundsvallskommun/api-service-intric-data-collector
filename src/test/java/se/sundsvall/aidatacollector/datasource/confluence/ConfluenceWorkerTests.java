@@ -25,7 +25,6 @@ import se.sundsvall.aidatacollector.datasource.confluence.integration.confluence
 import se.sundsvall.aidatacollector.datasource.confluence.integration.confluence.ConfluenceIntegrationProperties;
 import se.sundsvall.aidatacollector.datasource.confluence.integration.db.DbIntegration;
 import se.sundsvall.aidatacollector.datasource.confluence.model.Page;
-import se.sundsvall.aidatacollector.datasource.confluence.model.PageBuilder;
 import se.sundsvall.aidatacollector.integration.eneo.EneoIntegration;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 
@@ -151,9 +150,8 @@ class ConfluenceWorkerTests {
 		final var pageJson = "{\"someKey\": \"someValue\"}";
 		final var updatedAt = OffsetDateTime.now().toString();
 
-		final var page = PageBuilder.create()
-			.withUpdatedAt(LocalDateTime.now().minusMonths(1))
-			.build();
+		final var page = Page.create()
+			.withUpdatedAt(LocalDateTime.now().minusMonths(1));
 
 		final var workerSpy = spy(worker);
 
@@ -196,10 +194,9 @@ class ConfluenceWorkerTests {
 		final var eneoGroupId = "someEneoGroupId";
 		final var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
 		final var pageJson = "{\"someKey\": \"someValue\"}";
-		final var page = PageBuilder.create()
+		final var page = Page.create()
 			.withPageId(pageId)
-			.withAncestorIds(ancestorIds)
-			.build();
+			.withAncestorIds(ancestorIds);
 
 		final var workerSpy = spy(worker);
 
@@ -210,7 +207,7 @@ class ConfluenceWorkerTests {
 
 		final var result = workerSpy.getPageFromConfluence(pageId);
 
-		assertThat(result).hasValueSatisfying(actualResult -> assertThat(actualResult.eneoGroupId()).isEqualTo(eneoGroupId));
+		assertThat(result).hasValueSatisfying(actualResult -> assertThat(actualResult.getEneoGroupId()).isEqualTo(eneoGroupId));
 
 		verify(confluenceClientMock).getContent(pageId);
 		verify(pageMapperMock).toPage(MUNICIPALITY_ID, pageId, pageJson);
@@ -223,10 +220,9 @@ class ConfluenceWorkerTests {
 		final var pageId = "somePageId";
 		final var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
 		final var pageJson = "{\"someKey\": \"someValue\"}";
-		final var page = PageBuilder.create()
+		final var page = Page.create()
 			.withPageId(pageId)
-			.withAncestorIds(ancestorIds)
-			.build();
+			.withAncestorIds(ancestorIds);
 
 		final var workerSpy = spy(worker);
 
@@ -246,10 +242,9 @@ class ConfluenceWorkerTests {
 		final var pageId = "somePageId";
 		final var ancestorIds = List.of("someAncestorId", "someOtherAncestorId");
 		final var pageJson = "{\"someKey\": \"someValue\"}";
-		final var page = PageBuilder.create()
+		final var page = Page.create()
 			.withPageId(pageId)
-			.withAncestorIds(ancestorIds)
-			.build();
+			.withAncestorIds(ancestorIds);
 
 		final var workerSpy = spy(worker);
 
@@ -276,15 +271,14 @@ class ConfluenceWorkerTests {
 		final var baseUrl = "someBaseUrl";
 		final var path = "somePath";
 
-		final var page = PageBuilder.create()
+		final var page = Page.create()
 			.withPageId(pageId)
 			.withEneoGroupId(eneoGroupId)
 			.withEneoBlobId(eneoBlobId)
 			.withTitle(title)
 			.withBody(body)
 			.withBaseUrl(baseUrl)
-			.withPath(path)
-			.build();
+			.withPath(path);
 
 		final var workerSpy = spy(worker);
 		final var pageArgumentCaptor = ArgumentCaptor.forClass(Page.class);
@@ -300,7 +294,7 @@ class ConfluenceWorkerTests {
 		verifyNoMoreInteractions(dbIntegrationMock, eneoIntegrationMock);
 
 		final var savedPage = pageArgumentCaptor.getValue();
-		assertThat(savedPage.eneoBlobId()).isEqualTo(eneoBlobId);
+		assertThat(savedPage.getEneoBlobId()).isEqualTo(eneoBlobId);
 	}
 
 	@Test
@@ -314,15 +308,14 @@ class ConfluenceWorkerTests {
 		final var baseUrl = "someBaseUrl";
 		final var path = "somePath";
 
-		final var page = PageBuilder.create()
+		final var page = Page.create()
 			.withPageId(pageId)
 			.withEneoGroupId(eneoGroupId)
 			.withEneoBlobId(eneoBlobId)
 			.withTitle(title)
 			.withBody(body)
 			.withBaseUrl(baseUrl)
-			.withPath(path)
-			.build();
+			.withPath(path);
 
 		final var workerSpy = spy(worker);
 		final var pageArgumentCaptor = ArgumentCaptor.forClass(Page.class);
@@ -340,7 +333,7 @@ class ConfluenceWorkerTests {
 		verifyNoMoreInteractions(dbIntegrationMock, eneoIntegrationMock);
 
 		final var updatedPage = pageArgumentCaptor.getValue();
-		assertThat(updatedPage.eneoBlobId()).isEqualTo(newEneoBlobId);
+		assertThat(updatedPage.getEneoBlobId()).isEqualTo(newEneoBlobId);
 	}
 
 	@Test

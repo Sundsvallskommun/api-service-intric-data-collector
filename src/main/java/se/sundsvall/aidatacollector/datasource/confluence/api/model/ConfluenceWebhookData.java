@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.jilt.Builder;
 
-@Builder(setterPrefix = "with", factoryMethod = "create")
 @JsonPropertyOrder({
 	"timestamp", "event", "userKey", "page", "updateTrigger"
 })
@@ -25,7 +23,6 @@ public record ConfluenceWebhookData(
 
 	String updateTrigger){
 
-	@Builder(setterPrefix = "with", factoryMethod = "create")
 	public record Page(@NotNull Long id) {
 	}
 }

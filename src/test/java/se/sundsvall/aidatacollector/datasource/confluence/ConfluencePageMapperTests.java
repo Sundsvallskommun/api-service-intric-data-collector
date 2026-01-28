@@ -31,8 +31,8 @@ class ConfluencePageMapperTests {
 		final var page = pageMapper.newPage(municipalityId, pageId);
 
 		assertThat(page).hasAllNullFieldsOrPropertiesExcept("municipalityId", "pageId");
-		assertThat(page.municipalityId()).isEqualTo(municipalityId);
-		assertThat(page.pageId()).isEqualTo(pageId);
+		assertThat(page.getMunicipalityId()).isEqualTo(municipalityId);
+		assertThat(page.getPageId()).isEqualTo(pageId);
 	}
 
 	@Test
@@ -56,14 +56,14 @@ class ConfluencePageMapperTests {
 		when(pageJsonMock.getAncestorIds()).thenReturn(ancestorIds);
 
 		assertThat(pageMapper.toPage(municipalityId, pageId, json)).satisfies(page -> {
-			assertThat(page.pageId()).isEqualTo(pageId);
-			assertThat(page.municipalityId()).isEqualTo(municipalityId);
-			assertThat(page.title()).isEqualTo(title);
-			assertThat(page.body()).isEqualTo(body);
-			assertThat(page.baseUrl()).isEqualTo(baseUrl);
-			assertThat(page.path()).isEqualTo(path);
-			assertThat(page.updatedAt()).isEqualTo(updatedAt.toLocalDateTime());
-			assertThat(page.ancestorIds()).isEqualTo(ancestorIds);
+			assertThat(page.getPageId()).isEqualTo(pageId);
+			assertThat(page.getMunicipalityId()).isEqualTo(municipalityId);
+			assertThat(page.getTitle()).isEqualTo(title);
+			assertThat(page.getBody()).isEqualTo(body);
+			assertThat(page.getBaseUrl()).isEqualTo(baseUrl);
+			assertThat(page.getPath()).isEqualTo(path);
+			assertThat(page.getUpdatedAt()).isEqualTo(updatedAt.toLocalDateTime());
+			assertThat(page.getAncestorIds()).isEqualTo(ancestorIds);
 		});
 
 		verify(pageJsonParserMock).parse(json);
@@ -86,6 +86,6 @@ class ConfluencePageMapperTests {
 
 		final var page = pageMapper.toPage(municipalityId, pageId, json);
 
-		assertThat(page.updatedAt()).isNull();
+		assertThat(page.getUpdatedAt()).isNull();
 	}
 }
